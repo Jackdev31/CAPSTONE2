@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
+    <link href="{{ url_for('static', filename='bsit3_1.css') }}" rel="stylesheet" type="text/css" >
+    <title>LL SECTION</title>
+</head>
+<body>
+<div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>LIFELINE <img class="mr-3" src="static/img/cubers.png" alt="" width="48" height="48"></h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <p>Dashboard</p>
+                <li>
+                    <a href="{{ url_for('adminpage') }}">HOME</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS CSV</a>
+                </li>
+                <li>
+                    <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
+                    <ul class="collapse list-unstyled" id="lifelineSubmenu">
+                        <li>
+                            <a href="{{ url_for('life5') }}">LIFELINE(5)</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('life3') }}">LIFELINE(3)</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('life0') }}">LIFELINE(0)</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('feedbackpage') }}">FEEDBACKS</a>
+                </li>
+            </ul>
+<div class="sidenav-footer ">
+    <div class="small">
+        <p>© 2024 CUBERS TIGBAUAN <br> All rights reserved.</p>
+    </div>
+</div>
+        </nav>
+
+
+<!-- Page Content  -->
+<div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-c-yg">
+
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <h5 class="container-fluid">{{ name[0] }}!</h5>
+                    <h6 class="ngalan pl-3">Uploaded Files</h6>
+<ul class="notification-drop">
+    <li class="item">
+        <i class="fa fa-file fa-lg" aria-hidden="true"></i> 
+        <span class="btn__badge pulse-button">{{ filecount }}</span>
+        <ul style="max-height: 200px; overflow-y: auto;">
+            <li>
+                {% if filename %}
+                    {% for file in filename[::-1] %} 
+                        <h6>{{ file[0] }} <i class="fa fa-file-excel fa-sm" aria-hidden="true"></i></h6>
+                        <form action="{{ url_for('clear_filename') }}" method="post">
+                            <input type="hidden" name="filename" value="{{ file[0] }}">
+                            <button type="submit" class="btn btn-danger btn-sm" >Delete File</button>
+                        </form>
+                    {% endfor %}
+                {% else %}
+                    <h6>No Uploaded File</h6>
+                {% endif %}
+            </li>
+        </ul>
+    </li>
+</ul>
+
+      
+    </li>
+  </ul>
+
+                </div>
+            </nav>
+
+<h1>CSV Upload</h1>
+<h2>Section</h2>
+    <form action="/upload3-1" method="post" enctype="multipart/form-data">
+        <label for="file">Choose a CSV file:</label>
+        <i class="fa fa-file"></i>
+        <input type="file" name="file" accept=".csv" required>
+        <br>
+    <button type="submit" class="btn btn-info btn-l">
+        <span class="fa fa-upload"></span> UPLOAD FILE
+    </button>
+       
+    </form> 
+<br>
+
+
+
+<div class="container ml-2">
+    <div class="row">
+        <div class="col-15 mb-3 mb-lg-3">
+            <div class="overflow-hidden card table-nowrap table-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><label for="sem">Filter by Sem :</label>
+                            <select id="sem" class="form-control">
+                                <option value="All">All</option>
+                                {% for i in ay %}
+                                <option>{{ i[0] }}</option>
+                                {% endfor %}
+                            </select></h6>
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <ul class="alert alert-danger alert-sm pl-2">
+                        {% for messagee in messages %}
+                        <li>{{ messagee }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% endwith %}
+                    <div class="d-flex align-items-center">
+                        <div class="input-group">
+                            <input type="search" class="form-control rounded" id="searchInput" placeholder="Search Name" aria-label="Search" aria-describedby="search-addon">
+                            <button type="button" class="btn btn-outline-primary" id="searchButton">Search</button>
+                        
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive" style="max-height: 625px; overflow-y: auto;">
+                    <table class="table mb-0" id="studentTable">
+                        <thead class="small text-uppercase bg-body text-dark">
+                            <tr>
+                                <th class="text-center">NAME</th>
+                                <th class="text-center">STUDENT ID</th>
+                                <th class="text-center">SUBJECT</th>
+                                <th>P1</th>
+                                <th>P2</th>
+                                <th>P3</th>
+                                <th>FINAL GRADE</th>
+                                <th>NUMERIC GRADE</th>
+                                <th>REMARKS</th>
+                                <th class="text-center">ACADEMIC YEAR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in student_data %}
+                            <tr data-sem="{{ student[10] }}">
+                                <td><i class="fa fa-user" aria-hidden="true"></i> {{ student[1] }}</td>
+                                <td>{{ student[2] }}</td>
+                                <td>{{ student[3] }}</td>
+                                <td>{{ student[4] }}</td>
+                                <td>{{ student[5] }}</td>
+                                <td>{{ student[6] }}</td>
+                                <td class="text-center">{{ student[7] }}</td>
+                                <td class="text-center">{{ student[8] }}</td>
+                                <td class="text-center">{{ student[9] }}</td>
+                                <td class="text-center">{{ student[10] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+            
+
+
+</div> <!--content end-->          
+</div> <!--wrapper end-->  
+</body>
+</html>
+
+
+<script>
+$(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+$(document).ready(function() {
+  $(".notification-drop .item").on('click',function() {
+    $(this).find('ul').toggle();
+  });
+});
+
+</script>
+
+
+<script>
+$(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+</script>
+<script>
+    $(document).ready(function () {
+        // Initial filter based on selected semester
+        filterTableBySem($('#sem').val());
+
+        // Change event for semester dropdown
+        $('#sem').change(function () {
+            var selectedSem = $(this).val();
+            filterTableBySem(selectedSem);
+        });
+
+        // Function to filter table by semester
+        function filterTableBySem(selectedSem) {
+            $('#studentTable tbody tr').each(function () {
+                var rowSem = $(this).find('td:last').text().trim(); // Get the last cell (ACADEMIC YEAR)
+                if (selectedSem === 'All' || selectedSem === rowSem) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // Search functionality
+        $('#searchButton').on('click', function () {
+            var input, filter, table, tr, td, i, txtValue;
+            input = $('#searchInput').val().toUpperCase();
+            table = $('#studentTable');
+            tr = table.find('tbody tr');
+
+            tr.each(function () {
+                var rowSem = $(this).find('td:last').text().trim();
+                if ($('#sem').val() === 'All' || $('#sem').val() === rowSem) {
+                    td = $(this).find('td');
+                    var found = false;
+                    td.each(function () {
+                        txtValue = $(this).text();
+                        if (txtValue.toUpperCase().indexOf(input) > -1) {
+                            found = true;
+                            return false; // Break the loop if found
+                        }
+                    });
+                    if (found) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
+    <link href="{{ url_for('static', filename='profile.css') }}" rel="stylesheet" type="text/css" >
+    <title></title>
+</head>
+<body>
+<div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+
+                <h3>CITE STUD <img src="static/img/citelogo.jpg" alt="Logo" id="logoo"></h3>
+                
+            </div>
+
+            <ul class="list-unstyled components">
+                <p>Dashboard</p>
+                <li>
+                    <a href="{{ url_for('studentpage') }}">PERFORMANCE</a>
+                </li>
+                
+                <li>
+                    <a href="{{ url_for('studentfeedback') }}">CREATE FEEDBACK</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('studentprofile') }}">PROFILE</a>
+                </li>
+            </ul>
+<div class="sidenav-footer ">
+    <div class="small">
+        <p>© 2024 CUBERS TIGBAUAN <br> All rights reserved.</p>
+    </div>
+   <br>
+</div>
+        </nav>
+
+
+        <!-- Page Content  -->
+<div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-c-green">
+
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn bg-c-green1">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <h5 class="container-fluid">{{ fn[0] }}!</h5> 
+<form action="{{ url_for('studlogout') }}" method="post" style="display: inline;">
+    <button type="submit" class="btn btn-danger btn-sm">
+        <span class="fas fa-sign-out-alt"></span> Log out
+    </button>
+</form>
+
+                     
+                </div>
+</nav>
+<form>
+<div class="container">
+<div class="row gutters">
+<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+<div class="card h-80">
+    <div class="card-body">
+        <div class="account-settings">
+            <div class="user-profile mb-5">
+                <div class="user-avatar mt-5">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Maxwell Admin">
+                </div>
+                <h6 class="user-name">{{ fn[0] }}</h6>
+                <h6 class="user-email">{{ sid[0] }}</h6>
+            </div>
+            
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+<div class="card h-100">
+    <div class="card-body">
+        <div class="row gutters">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <h6 class="mb-2 text-primary">Personal Details</h6>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" class="form-control" id="fullName" placeholder="Enter full name">
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="eMail">Personal Email</label>
+                    <input type="email" class="form-control" id="eMail" placeholder="Enter email">
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" class="form-control" id="phone" placeholder="Enter phone number">
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="website">Facebook Link</label>
+                    <input type="url" class="form-control" id="website" placeholder="Facebook url">
+                </div>
+            </div>
+        </div>
+        <div class="row gutters">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <h6 class="mt-3 mb-2 text-primary">Address</h6>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="Street">Street</label>
+                    <input type="name" class="form-control" id="Street" placeholder="Enter Street">
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="ciTy">City</label>
+                    <input type="name" class="form-control" id="ciTy" placeholder="Enter City">
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="sTate">Municipality</label>
+                    <input type="text" class="form-control" id="sTate" placeholder="Enter Municipality">
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="zIp">Zip Code</label>
+                    <input type="text" class="form-control" id="zIp" placeholder="Zip Code">
+                </div>
+            </div>
+        </div>
+        <div class="row gutters">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="text-right">
+                    <input type="reset" id="submit" name="reset" class="btn btn-primary" value="Clear">
+                    <button type="button" id="submit" name="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</form>
+         
+
+</div>
+
+</body>
+</html>
+
+<script>
+$(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+</script>

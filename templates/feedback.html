@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
+    <link href="{{ url_for('static', filename='feedback.css') }}" rel="stylesheet" type="text/css" >
+    <title>FEEDBACK</title>
+</head>
+<body>
+<div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>LIFELINE <img class="mr-3" src="static/img/cubers.png" alt="" width="48" height="48"></h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <p>Dashboard</p>
+                <li>
+                    <a href="{{ url_for('adminpage') }}">HOME</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS CSV</a>
+                </li>
+                <li>
+                    <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
+                    <ul class="collapse list-unstyled" id="lifelineSubmenu">
+                        <li>
+                            <a href="{{ url_for('life5') }}">LIFELINE(5)</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('life3') }}">LIFELINE(3)</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('life0') }}">LIFELINE(0)</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('feedbackpage') }}">FEEDBACKS</a>
+                </li>
+            </ul>
+<div class="sidenav-footer ">
+    <div class="small">
+        <p>© 2024 CUBERS TIGBAUAN <br> All rights reserved.</p>
+    </div>
+</div>
+        </nav>
+
+
+        <!-- Page Content  -->
+<div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-c-yg">
+
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <h4 class="container-fluid">{{ name[0] }} !</h4>
+<form id="logoutForm" action="{{ url_for('logout') }}" method="post" style="display: inline;">
+        <button type="button" id="logoutBtn" class="btn btn-danger btn-sm">
+            <span class="fas fa-sign-out-alt"></span> Log out
+        </button>
+</form>        </div>
+            </nav>
+
+<div class="col-lg-5 mx-auto">
+    <div class="box shadow-sm rounded bg-white mb-5" style="margin-left: -350px;">
+        <div class="box-title border-bottom p-3">
+            <h6 class="m-0">FEEDBACKS ({{ feednum[0] }})</h6>
+        </div>
+<div class="box-body p-0 overflow-auto" style="max-height: 700px; overflow-y: auto;">
+{% for feedback,time in feedback_data[::-1] %}
+<div class="p-3 d-flex align-items-center bg-light border-bottom osahan-post-header">
+    <div class="dropdown-list-image mr-3">
+        <img class="rounded-circle" src="static/img/person.png" alt="" />
+    </div>
+    <div class="font-weight-bold mr-3">
+        <div class="text-truncate">Anonymous</div>
+        <div class="small">{{ feedback }}</div>
+    </div>
+     <div class="ml-auto small text-muted">{{ time.strftime('%b %d ' ', %I:%M %p') }}</div>
+                        
+</div>
+  {% endfor %}
+</div>
+
+
+</div> <!-- End of col -->
+</div> <!-- End of box -->
+
+
+</div> <!-- End of CONTENT -->         
+</div> <!-- End of Wrapper -->
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        $('#logoutBtn').on('click', function () {
+            var result = confirm("Are you sure you want to log out?");
+            if (result) {
+                $('#logoutForm').submit();
+            }
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+</script>

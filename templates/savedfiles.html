@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
+    <link href="{{ url_for('static', filename='bsit3_1.css') }}" rel="stylesheet" type="text/css" >
+    <title>LL SECTION</title>
+</head>
+<body>
+<div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>LIFELINE <img class="mr-3" src="static/img/cubers.png" alt="" width="48" height="48"></h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <p>Dashboard</p>
+                <li>
+                    <a href="{{ url_for('deanpage') }}">HOME</a>
+                </li>
+                <li>
+                    <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
+                    <ul class="collapse list-unstyled" id="lifelineSubmenu">
+                        <li>
+                            <a href="{{ url_for('deanlife5') }}">LIFELINE(5)</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('deanlife3') }}">LIFELINE(3)</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('deanlife0') }}">LIFELINE(0)</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('savedfile') }}">SAVED FILES</a>
+                </li>
+            </ul>
+<div class="sidenav-footer ">
+    <div class="small">
+        <p>© 2024 CUBERS TIGBAUAN <br> All rights reserved.</p>
+    </div>
+</div>
+        </nav>
+
+
+<!-- Page Content  -->
+<div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-c-yg">
+
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <h5 class="container-fluid">!</h5>
+                    <h6 class="ngalan pl-3">Uploaded Files</h6>
+<ul class="notification-drop">
+    <li class="item">
+        <i class="fa fa-file fa-lg" aria-hidden="true"></i> 
+        <span class="btn__badge pulse-button"></span>
+        <ul style="max-height: 200px; overflow-y: auto;">
+            <li>
+                
+                 
+                        <h6><i class="fa fa-file-excel fa-sm" aria-hidden="true"></i></h6>
+                        <form action="#" method="post">
+                            <input type="hidden" name="filename" value="">
+                            <button type="submit" class="btn btn-danger btn-sm" >Delete File</button>
+                        </form>
+                    
+             
+                           </li>
+        </ul>
+    </li>
+</ul>
+
+      
+    </li>
+  </ul>
+
+                </div>
+            </nav>
+
+
+</div> <!--content end-->          
+</div> <!--wrapper end-->  
+</body>
+</html>
+
+
+<script>
+$(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+$(document).ready(function() {
+  $(".notification-drop .item").on('click',function() {
+    $(this).find('ul').toggle();
+  });
+});
+
+</script>
+<script>
+        $(document).ready(function () {
+            $('#exportBtn').on('click', function () {
+                // Call function to export table to CSV
+                exportTableToCSV();
+            });
+
+            // Function to export table to CSV
+            function exportTableToCSV() {
+                var table = document.getElementById("studentTable");
+                var rows = table.rows;
+                var csv = [];
+                for (var i = 0; i < rows.length; i++) {
+                    var row = [], cols = rows[i].cells;
+                    for (var j = 0; j < cols.length; j++) {
+                        row.push(cols[j].textContent.trim());
+                    }
+                    csv.push(row.join(","));
+                }
+                var csvText = csv.join("\n");
+                var blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
+                saveAs(blob, 'AY 20-- - 20-- 1ST SEM');
+
+                // Send the file content to the server to save
+                saveFileToServer(blob);
+            }
+
+            // Function to send file content to server
+            function saveFileToServer(fileBlob) {
+                var formData = new FormData();
+                formData.append('file', fileBlob);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/save_file',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        console.log('File saved:', response);
+                    },
+                    error: function (error) {
+                        console.error('Error saving file:', error);
+                    }
+                });
+            }
+
+        });
+    </script>
+
+<script>
+    document.getElementById("searchButton").addEventListener("click", function() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("studentTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td");
+            for (var j = 0; j < td.length; j++) {
+                txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    break;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    });
+</script>
+
+
