@@ -30,13 +30,14 @@
                 <h3>LIFELINE <img class="mr-3" src="static/img/cubers.png" alt="" width="48" height="48"></h3>
             </div>
 
-            <ul class="list-unstyled components">
+<ul class="list-unstyled components">
                 <p>Dashboard</p>
                 <li>
                     <a href="{{ url_for('adminpage') }}">HOME</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('section1') }}">UPLOAD CLASS CSV</a>
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS</a>
+            
                 </li>
                 <li>
                     <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
@@ -50,6 +51,21 @@
                         <li>
                             <a href="{{ url_for('life0') }}">LIFELINE(0)</a>
                         </li>
+                    </ul>
+                </li>
+
+                  <li>
+                    <a href="#studentcredentials" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">STUDENT CREDENTIALS</a>
+                    <ul class="collapse list-unstyled" id="studentcredentials">
+                        <li>
+                            <a href="{{ url_for('studentinfo') }}">STUDENT INFO</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('takeaction') }}">TAKE ACTION</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('studentremarks') }}">STUDENT REMARKS</a>
+                        </li>  
                     </ul>
                 </li>
                 <li>
@@ -105,8 +121,8 @@
                 </div>
             </nav>
 
-<h1>CSV Upload</h1>
-<h2>Section</h2>
+<h1>UPLOAD SECTION</h1>
+<br>
     <form action="/upload3-1" method="post" enctype="multipart/form-data">
         <label for="file">Choose a CSV file:</label>
         <i class="fa fa-file"></i>
@@ -121,7 +137,7 @@
 
 
 
-<div class="container ml-2">
+<div class="container ml-10">
     <div class="row">
         <div class="col-15 mb-3 mb-lg-3">
             <div class="overflow-hidden card table-nowrap table-card">
@@ -144,7 +160,7 @@
                     {% endwith %}
                     <div class="d-flex align-items-center">
                         <div class="input-group">
-                            <input type="search" class="form-control rounded" id="searchInput" placeholder="Search Name" aria-label="Search" aria-describedby="search-addon">
+                            <input type="search" class="form-control rounded" id="searchInput" placeholder="Search Name" aria-label="Search" aria-describedby="search-addon">&nbsp;
                             <button type="button" class="btn btn-outline-primary" id="searchButton">Search</button>
                         
                         </div>
@@ -156,12 +172,7 @@
                             <tr>
                                 <th class="text-center">NAME</th>
                                 <th class="text-center">STUDENT ID</th>
-                                <th class="text-center">SUBJECT</th>
-                                <th>P1</th>
-                                <th>P2</th>
-                                <th>P3</th>
-                                <th>FINAL GRADE</th>
-                                <th>NUMERIC GRADE</th>
+                                <th class="text-center">SUBJECT CODE & DESCRIPTION</th>
                                 <th>REMARKS</th>
                                 <th class="text-center">ACADEMIC YEAR</th>
                             </tr>
@@ -171,12 +182,8 @@
                             <tr data-sem="{{ student[10] }}">
                                 <td><i class="fa fa-user" aria-hidden="true"></i> {{ student[1] }}</td>
                                 <td>{{ student[2] }}</td>
-                                <td>{{ student[3] }}</td>
-                                <td>{{ student[4] }}</td>
-                                <td>{{ student[5] }}</td>
-                                <td>{{ student[6] }}</td>
-                                <td class="text-center">{{ student[7] }}</td>
-                                <td class="text-center">{{ student[8] }}</td>
+                                <td class="text-center" >{{ student[3] }}</td>
+                                
                                 <td class="text-center">{{ student[9] }}</td>
                                 <td class="text-center">{{ student[10] }}</td>
                             </tr>
@@ -216,29 +223,17 @@ $(document).ready(function() {
 
 </script>
 
-
-<script>
-$(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-            });
-        });
-</script>
 <script>
     $(document).ready(function () {
-        // Initial filter based on selected semester
         filterTableBySem($('#sem').val());
-
-        // Change event for semester dropdown
         $('#sem').change(function () {
             var selectedSem = $(this).val();
             filterTableBySem(selectedSem);
         });
 
-        // Function to filter table by semester
         function filterTableBySem(selectedSem) {
             $('#studentTable tbody tr').each(function () {
-                var rowSem = $(this).find('td:last').text().trim(); // Get the last cell (ACADEMIC YEAR)
+                var rowSem = $(this).find('td:last').text().trim(); 
                 if (selectedSem === 'All' || selectedSem === rowSem) {
                     $(this).show();
                 } else {
@@ -247,7 +242,6 @@ $(document).ready(function () {
             });
         }
 
-        // Search functionality
         $('#searchButton').on('click', function () {
             var input, filter, table, tr, td, i, txtValue;
             input = $('#searchInput').val().toUpperCase();
@@ -263,7 +257,7 @@ $(document).ready(function () {
                         txtValue = $(this).text();
                         if (txtValue.toUpperCase().indexOf(input) > -1) {
                             found = true;
-                            return false; // Break the loop if found
+                            return false;
                         }
                     });
                     if (found) {

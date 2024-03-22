@@ -17,8 +17,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
-    <link href="{{ url_for('static', filename='life0.css') }}" rel="stylesheet" type="text/css" >
-    <title>DEAN LIFE 0 VIEW</title>
+    <link href="{{ url_for('static', filename='remarks.css') }}" rel="stylesheet" type="text/css" >
+    <title>STUDENT REMARKS</title>
 </head>
 <body>
 <div class="wrapper">
@@ -28,39 +28,57 @@
                 <h3>LIFELINE <img class="mr-3" src="static/img/cubers.png" alt="" width="48" height="48"></h3>
             </div>
 
-            <ul class="list-unstyled components">
+<ul class="list-unstyled components">
                 <p>Dashboard</p>
                 <li>
-                    <a href="{{ url_for('deanpage') }}">HOME</a>
+                    <a href="{{ url_for('adminpage') }}">HOME</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS</a>
+            
                 </li>
                 <li>
                     <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
                     <ul class="collapse list-unstyled" id="lifelineSubmenu">
                         <li>
-                            <a href="{{ url_for('deanlife5') }}">LIFELINE(5)</a>
+                            <a href="{{ url_for('life5') }}">LIFELINE(5)</a>
                         </li>
                         <li>
-                            <a href="{{ url_for('deanlife3') }}">LIFELINE(3)</a>
+                            <a href="{{ url_for('life3') }}">LIFELINE(3)</a>
                         </li>
                         <li>
-                            <a href="{{ url_for('deanlife0') }}">LIFELINE(0)</a>
+                            <a href="{{ url_for('life0') }}">LIFELINE(0)</a>
                         </li>
                     </ul>
                 </li>
+
+                  <li>
+                    <a href="#studentcredentials" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">STUDENT CREDENTIALS</a>
+                    <ul class="collapse list-unstyled" id="studentcredentials">
+                        <li>
+                            <a href="{{ url_for('studentinfo') }}">STUDENT INFO</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('takeaction') }}">TAKE ACTION</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('studentremarks') }}">STUDENT REMARKS</a>
+                        </li>  
+                    </ul>
+                </li>
                 <li>
-                    <a href="{{ url_for('actiontaken') }}">ACTION TAKEN</a>
+                    <a href="{{ url_for('feedbackpage') }}">FEEDBACKS</a>
                 </li>
             </ul>
 <div class="sidenav-footer ">
     <div class="small">
         <p>© 2024 CUBERS TIGBAUAN <br> All rights reserved.</p>
     </div>
-           
-
+</div>
         </nav>
 
 
-<!-- Page Content  -->
+        <!-- Page Content  -->
 <div id="content">
 
             <nav class="navbar navbar-expand-lg navbar-light bg-c-yg">
@@ -70,99 +88,97 @@
                     <button type="button" id="sidebarCollapse" class="btn btn-info">
                         <i class="fas fa-align-left"></i>
                     </button>
-                    <h5 class="container-fluid">{{ name [0] }}!</h5>
-<form id="logoutForm" action="{{ url_for('deanlogout') }}" method="post" style="display: inline;">
+                    <h4 class="container-fluid">{{ name[0] }} !</h4>
+<form id="logoutForm" action="{{ url_for('logout') }}" method="post" style="display: inline;">
         <button type="button" id="logoutBtn" class="btn btn-danger btn-sm">
             <span class="fas fa-sign-out-alt"></span> Log out
         </button>
-</form>                 
-                </div>
+</form>        </div>
             </nav>
-<h1>LIFELINE 0 </h1> <p><i class="fa fa-heart"></i> <i class="fa fa-heart"></i> <i class="fa fa-heart"></i>  <i class="fa fa-heart"></i> <i class="fa fa-heart"></i></p>
+
+<h1 class="text-center">STUDENT REMARKS</h1>
 <br>
-<div class="container ml-2">
-    <div class="row mb-3">
-    <div class="row">
-        <div class="col-13 mb-3 mb-lg-5">
-            <div class="overflow-hidden card table-nowrap table-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><label for="sem">Filter by Sem :</label>
-                            <select id="sem" class="form-control">
-                                <option value="All">All</option>
-                                {% for i in ay %}
-                                <option>{{ i[0] }}</option>
-                                {% endfor %}
-                            </select></h6>
-                    <div class="d-flex align-items-center">
-                        <div class="input-group">
-                            <input type="search" class="form-control rounded" id="searchInput" placeholder="Search Name" aria-label="Search" aria-describedby="search-addon">&nbsp;
-                            <button type="button" class="btn btn-outline-primary" id="searchButton">Search</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-responsive" style="max-height: 625px; overflow-y: auto;">
+
+<div class="table-responsive" style="max-height: 625px; overflow-y: auto;">
+<div class="card-header d-flex justify-content-between align-items-center">
+    <h6 class="mb-0"><label for="sem">Filter by Sem :</label>
+        <select id="sem" class="form-control">
+            <option value="All">All</option>
+            {% for i in ay %}
+            <option>{{ i[0] }}</option>
+            {% endfor %}
+        </select></h6>
+        <div class="d-flex align-items-center">
+            <div class="input-group">
+                <input type="search" class="form-control rounded" id="searchInput" placeholder="Search Name" aria-label="Search" aria-describedby="search-addon"> &nbsp;
+                <button type="button" class="btn btn-outline-primary" id="searchButton">Search</button>
+            </div>
+        </div>
+</div>    
                     <table class="table mb-0" id="studentTable">
                         <thead class="small text-uppercase bg-body text-dark">
                             <tr>
+                                
                                 <th>NAME</th>
                                 <th>STUDENT ID</th>
                                 <th>SUBJECT</th>
-                                <th>P1</th>
-                                <th>P2</th>
-                                <th>P3</th>
-                                <th>FINAL GRADE</th>
-                                <th>NUMERIC GRADE</th>
-                                <th class="text-center">ACADEMIC YEAR</th>
+                                <th>ACADEMIC YEAR</th>
+                                <th>ACTION REMARKS</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                            {% for i in data0 %}
+                         <tbody>
+                            {%for i in student_data%}
                             <tr>
-                                <td><i class="fa fa-user" aria-hidden="true"></i> {{ i[1] }}</td>
-                                <td>{{ i[2] }}</td>
-                                <td>{{ i[3] }}</td>
-                                <td>{{ i[4] }}</td>
-                                <td>{{ i[5] }}</td>
-                                <td>{{ i[6] }}</td>
-                                <td class="text-center">{{ i[7] }}</td>
-                                <td class="text-center">{{i[8] }}</td>
-                                <td>{{ i[11] }}</td>
+                                <td><i class="fa fa-user" aria-hidden="true"></i> {{i[0]}}</td>
+                                <td>{{i[1]}}</td>
+                                <td>{{i[2]}}</td>
+                                <td>{{i[3]}}</td>
+                                <td>{{i[4]}}</td>                       
                             </tr>
-                            {% endfor %}
+                          {%endfor%}
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+</div> <!-- End of col -->
+</div> <!-- End of box -->
 
 
-
+</div> <!-- End of CONTENT -->         
+</div> <!-- End of Wrapper -->
+</body>
+</html>
 <script>
-       
-        $(document).ready(function () {
+    $(document).ready(function () {
+        $('#logoutBtn').on('click', function () {
+            var result = confirm("Are you sure you want to log out?");
+            if (result) {
+                $('#logoutForm').submit();
+            }
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
             });
         });
 </script>
-
 <script>
     $(document).ready(function () {
-        // Initial filter based on selected semester
         filterTableBySem($('#sem').val());
 
-        // Change event for semester dropdown
         $('#sem').change(function () {
             var selectedSem = $(this).val();
             filterTableBySem(selectedSem);
         });
 
-        // Function to filter table by semester
         function filterTableBySem(selectedSem) {
             $('#studentTable tbody tr').each(function () {
-                var rowSem = $(this).find('td:last').text().trim(); // Get the last cell (ACADEMIC YEAR)
+                var rowSem = $(this).find('td:nth-child(4)').text().trim(); // Adjust according to the column index of Academic Year
                 if (selectedSem === 'All' || selectedSem === rowSem) {
                     $(this).show();
                 } else {
@@ -171,7 +187,6 @@
             });
         }
 
-        // Search functionality
         $('#searchButton').on('click', function () {
             var input, filter, table, tr, td, i, txtValue;
             input = $('#searchInput').val().toUpperCase();
@@ -179,15 +194,15 @@
             tr = table.find('tbody tr');
 
             tr.each(function () {
-                var rowSem = $(this).find('td:last').text().trim();
+                var rowSem = $(this).find('td:nth-child(4)').text().trim(); // Adjust according to the column index of Academic Year
                 if ($('#sem').val() === 'All' || $('#sem').val() === rowSem) {
                     td = $(this).find('td');
                     var found = false;
                     td.each(function () {
-                        txtValue = $(this).text();
-                        if (txtValue.toUpperCase().indexOf(input) > -1) {
+                        txtValue = $(this).text().toUpperCase();
+                        if (txtValue.indexOf(input) > -1) {
                             found = true;
-                            return false; // Break the loop if found
+                            return false;
                         }
                     });
                     if (found) {
@@ -202,5 +217,4 @@
         });
     });
 </script>
-</body>
-</html>
+

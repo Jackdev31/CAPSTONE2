@@ -32,11 +32,11 @@
                 <div class="text-center">
                   <img src="static/img/cubers.png"
                     style="width: 185px;" alt="logo">
-                  <h5 class="mt-1 mb-3 pb-1">ADMIN LOGIN!</h5>
+                  <h5 class="mt-1 mb-3 pb-1">TEACHER LOGIN!</h5>
                 </div>
                 {% with messages = get_flashed_messages() %}
                   {% if messages %}
-              <ul class="alert alert-success pl-5">
+              <ul class="alert alert-danger pl-5">
                 {% for message in messages %}
               <li>{{ message }}</li>
                 {% endfor %}
@@ -47,18 +47,23 @@
 
                 <form class="mx-1 mx-md-4" action="{{ url_for('login') }}" method="POST">
                   <div class="form-outline mb-4">
-                    <label class="form-label" for="form2Example11">Username</label>
-                    <input type="text" name="username" id="form2Example11" class="form-control"
-                      placeholder="Username"  required />
+                    <label class="form-label" for="form2Example11">TEACHER_ID</label>
+                    <input type="text" name="TEACHER_ID" id="form2Example11" class="form-control"
+                      placeholder="Enter Teacher ID"  required />
                   </div>
 
                   <div class="form-outline mb-4">
-                    <label class="form-label" for="form2Example22">Password</label>
-                    <input type="password" name="password" id="form2Example22" class="form-control" placeholder="Enter Password" required />
+                    <label class="form-label" for="form2Example22">PASSWORD</label>
+                    <input type="password" name="PASSWORD" id="form2Example22" class="form-control" placeholder="Enter Password" required />
+                    <input class="palagpat mt-3"type="checkbox" onclick="myFunction()"> Show Password
                   </div>
 
                   <div class="text-center pt-1 mb-3 pb-1">
                     <input class="btn btn-warning btn-block fa-lg online-gradient-generated mb-3" type="submit" value="LOGIN">
+                  </div>
+                  <div class="d-flex align-items-center justify-content-center pb-4">
+                    <p class="mb-0">Create an account?</p> &nbsp;
+                    <a href="{{ url_for('adminreg') }}" class="btn btn-outline-danger">Click me!</a>
                   </div>
                  
                 </form>
@@ -82,5 +87,15 @@
 </div>
 </body>
 </html>
+<script>
+  function myFunction() {
+  var x = document.getElementById("form2Example22");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+</script>
 
 

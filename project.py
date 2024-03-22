@@ -1,5 +1,5 @@
-from flask import(Flask,
-render_template,request, redirect, url_for, flash, session,jsonify)
+from flask import(Flask, render_template,
+request, redirect, url_for, flash, session)
 from flask_mysqldb import MySQL
 from datetime import datetime
 import pandas as pd 
@@ -16,67 +16,94 @@ app.config['MYSQL_DB'] = 'cubersdaw'
 
 mysql = MySQL(app)
 
-@app.route('/',methods=['GET', 'POST'])
+@app.route('/',  methods=['GET', 'POST'])
 def index():
 
     return render_template('index.html')
+
+@app.route('/student', methods=['GET', 'POST'])
+def student():
+
+    return render_template('student.html')
+
+@app.route('/admin-register',methods=['GET', 'POST'])
+def adminreg():
+    if request.method == 'POST':
+        TEACHER_ID = request.form['TEACHER_ID']  
+        NAME = request.form['NAME']
+        UI_MAIL = request.form['UIMAIL']
+        PASSWORD = request.form['PASSWORD']
+
+
+        #validation if ang teacher id ara na sa table nga teachers
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM teachers WHERE TEACHER_ID = %s", (TEACHER_ID,))
+        obtain_teacherid = cur.fetchone()
+        cur.close()
+
+        if obtain_teacherid:
+            flash('Teacher ID already exists.')
+        else:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO teachers (TEACHER_ID, NAME, UI_MAIL, PASSWORD) VALUES (%s, %s, %s, %s)", 
+            (TEACHER_ID, NAME, UI_MAIL, PASSWORD))
+            mysql.connection.commit() #kung wala ga exist ang teacherid it amo ni commit ya
+            cur.close()
+
+            flash('Registered successful!')
+            return redirect(url_for('adminreg'))
+
+    return render_template('adminreg.html')
 
 
 @app.route('/admin-login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        TEACHER_ID = request.form['TEACHER_ID']
+        PASSWORD = request.form['PASSWORD']
 
-        # validation if chakto ang user sa database admin table
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM admin WHERE username = %s AND password = %s", (username, password))
-        user = cur.fetchone()
+        cur.execute("SELECT * FROM teachers WHERE TEACHER_ID = %s AND PASSWORD = %s", (TEACHER_ID, PASSWORD))
+        check = cur.fetchone()
         cur.close()
 
-        if user:
-            session['username'] = username  #para mag store sang username sa session
+        if check:
+            session['TEACHER_ID'] = TEACHER_ID  #para mag store sang username sa session
             return redirect(url_for('adminpage'))  #makadto sa adminpage if correct validation
         else:
-            flash('Invalid username or password', 'error')
-
+            flash('Invalid Teacher ID or Password!')
     return render_template('login.html')
 
 @app.route('/adminpage')
 def adminpage():
-    if 'username' not in session:
-        flash('Please log in first', 'error')
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
         return redirect(url_for('login'))
 
-    # Get the logged-in teacher's ID
-    username = session['username']
+    TEACHER_ID = session['TEACHER_ID']
 
     cur = mysql.connection.cursor()
 
-    # Count the number of students for the logged-in teacher
-    cur.execute("SELECT COUNT(*) FROM citestudents WHERE username = %s", (username,))
+    cur.execute("SELECT COUNT(*) FROM citestudents WHERE TEACHER_ID = %s", (TEACHER_ID,))
     number_of_students = cur.fetchone()
 
-    cur.execute("SELECT NAME FROM admin WHERE username = %s", (username,))
+    cur.execute("SELECT NAME FROM teachers WHERE TEACHER_ID = %s", (TEACHER_ID,))
     name = cur.fetchone()
 
-    # Count the number of students with numeric grades greater than 8
-    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE < 2 AND username = %s", (username,))
+    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE < 2 AND TEACHER_ID = %s", (TEACHER_ID,))
     lifeline5 = cur.fetchone()
 
-    # Count the number of students with numeric grades between 5 and 8
-    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 2 AND username < 3 AND username = %s", (username,))
+    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 2 AND TEACHER_ID < 3 AND TEACHER_ID = %s", (TEACHER_ID,))
     lifeline3 = cur.fetchone()
 
-    # Count the number of students with numeric grades less than 5
-    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >=3 AND username = %s", (username,))
+    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >=3 AND TEACHER_ID = %s", (TEACHER_ID,))
     lifeline0 = cur.fetchone()
 
 
     cur.close()
 
     return render_template('adminpage.html',
-     username=session['username'],
+     TEACHER_ID=session['TEACHER_ID'],
      number_of_students=number_of_students,
      name=name,
      lifeline5=lifeline5,
@@ -88,54 +115,58 @@ def adminpage():
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+def getname(teacher_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT NAME FROM teachers WHERE TEACHER_ID = %s", (teacher_id,))
+    faculty_name = cur.fetchone()
+    cur.close()
+    return faculty_name
+
 @app.route('/upload3-1', methods=['POST'])
 def upload3_1():
-    # Check if user is logged in
-    if 'username' not in session:
-        flash('Please log in first', 'error')
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
         return redirect(url_for('login'))
-
-    # Access the teacher's ID from the session
-    teacher_id = session.get('username')
+    
+    teacher_id = session.get('TEACHER_ID')
+    faculty_name = getname(teacher_id)
 
     uploaded_file = request.files['file']
 
     if uploaded_file.filename != '':
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
 
-        # Check if the file with the same name already exists for the logged-in user
         if file_already_uploaded(uploaded_file.filename, teacher_id):
             flash('File already uploaded!', 'error')
             return redirect(url_for("section1"))
 
         uploaded_file.save(file_path)
 
-        # Parse CSV data and insert into the database
-        parseCSV3_1(file_path, teacher_id, uploaded_file.filename)
+        parseCSV3_1(file_path, teacher_id, faculty_name, uploaded_file.filename)
 
     return redirect(url_for("section1"))
 
 
 def file_already_uploaded(filename, teacher_id):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM citestudents WHERE filename = %s AND username = %s", (filename, teacher_id))
+    cur.execute("SELECT * FROM citestudents WHERE filename = %s AND TEACHER_ID = %s", (filename, teacher_id))
     result = cur.fetchone()
     cur.close()
     return result
 
 
 
-def parseCSV3_1(filePath, teacher_id, filename):
+def parseCSV3_1(filePath, teacher_id, faculty_name, filename):
     col_names = ['ID', 'NAME', 'STUDENT_ID', 'SUBJECT',
     'P1', 'P2', 'P3', 'FINAL_GRADE', 'NUMERIC_GRADE', 'REMARKS','ACADEMIC_YEAR']
     csvData = pd.read_csv(filePath, names=col_names, header=None)
 
     for i, row in csvData.iterrows():
-        sql = "INSERT INTO citestudents(ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, REMARKS, ACADEMIC_YEAR, username, filename) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO citestudents(ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, REMARKS, ACADEMIC_YEAR, TEACHER_ID, FACULTY_NAME, filename) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         values = (row['ID'], row['NAME'], row['STUDENT_ID'], 
         row['SUBJECT'], row['P1'], row['P2'], row['P3'], 
         row['FINAL_GRADE'], row['NUMERIC_GRADE'], row['REMARKS'],row['ACADEMIC_YEAR'],
-        teacher_id, filename)
+        teacher_id, faculty_name, filename)
 
         cur = mysql.connection.cursor()
         cur.execute(sql, values)
@@ -146,38 +177,38 @@ def parseCSV3_1(filePath, teacher_id, filename):
 
 @app.route('/bsit3-1')
 def section1():
-    if 'username' not in session:
-        flash('Please log in first', 'error')
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
         return redirect(url_for('login'))
 
-    user_id = session['username']
+    TEACHER_ID = session['TEACHER_ID']
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT name FROM admin WHERE username = %s", (user_id,))
+    cur.execute("SELECT name FROM teachers WHERE TEACHER_ID = %s", (TEACHER_ID,))
     name = cur.fetchone()
 
     cur.execute(
     "SELECT ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, REMARKS, ACADEMIC_YEAR "
     "FROM citestudents "
-    "WHERE username = %s",
-    (user_id,))
+    "WHERE TEACHER_ID = %s",
+    (TEACHER_ID,))
     student_data = cur.fetchall()
 
-    cur.execute("SELECT COUNT(DISTINCT filename) FROM citestudents WHERE username = %s", (user_id,))
+    cur.execute("SELECT COUNT(DISTINCT filename) FROM citestudents WHERE TEACHER_ID = %s", (TEACHER_ID,))
     filecount = cur.fetchone()[0]
 
-    cur.execute("SELECT DISTINCT filename FROM citestudents WHERE username = %s", (user_id,))
+    cur.execute("SELECT DISTINCT filename FROM citestudents WHERE TEACHER_ID = %s", (TEACHER_ID,))
     filename = cur.fetchall()
 
-    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE username = %s", (user_id,))
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE TEACHER_ID = %s", (TEACHER_ID,))
     ay = cur.fetchall()
 
 
     cur.close()
 
     return render_template('bsit3-1.html', 
-        username=session['username'], 
+        TEACHER_ID=session['TEACHER_ID'], 
         name=name,
         student_data=student_data,
         filecount=filecount,
@@ -186,16 +217,16 @@ def section1():
 
 @app.route('/clear_filename', methods=['POST'])
 def clear_filename():
-    if 'username' not in session:
-        flash('Please log in first', 'error')
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        filename = request.form['filename']  # Extract the filename from the form data
-        username = session['username']  # Get the logged-in username
+        filename = request.form['filename'] 
+        TEACHER_ID = session['TEACHER_ID'] 
 
         cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM citestudents WHERE filename = %s AND username = %s", (filename, username))
+        cur.execute("DELETE FROM citestudents WHERE filename = %s AND TEACHER_ID = %s", (filename, TEACHER_ID))
         mysql.connection.commit()
         cur.close()
 
@@ -204,25 +235,25 @@ def clear_filename():
 
 @app.route('/lifeline5')
 def life5():
-    if 'username' not in session:
-        flash('Please log in first', 'error')
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
         return redirect(url_for('login'))
 
-    user_id = session['username']
+    user_id = session['TEACHER_ID']
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT name FROM admin WHERE username = %s", (user_id,))
+    cur.execute("SELECT name FROM teachers WHERE TEACHER_ID = %s", (user_id,))
     name = cur.fetchone()
 
     cur.execute(
     "SELECT ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE,ACADEMIC_YEAR "
     "FROM citestudents "
-    "WHERE NUMERIC_GRADE < 2 AND username = %s",
+    "WHERE NUMERIC_GRADE < 2 AND TEACHER_ID = %s",
     (user_id,))
     student_data = cur.fetchall()
 
-    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE username = %s", (user_id,))
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE TEACHER_ID = %s", (user_id,))
     ay = cur.fetchall()
 
     cur.close()
@@ -234,26 +265,26 @@ def life5():
 
 @app.route('/lifeline3')
 def life3():
-    if 'username' not in session:
-        flash('Please log in first', 'error')
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
         return redirect(url_for('login'))
 
-    user_id = session['username']
+    user_id = session['TEACHER_ID']
     
     cur = mysql.connection.cursor()
 
     cur.execute(
     "SELECT ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, ACADEMIC_YEAR "
     "FROM citestudents "
-    "WHERE NUMERIC_GRADE >= 2 AND NUMERIC_GRADE < 3 AND username = %s",
+    "WHERE NUMERIC_GRADE >= 2 AND NUMERIC_GRADE < 3 AND TEACHER_ID = %s",
     (user_id,))
     student_data = cur.fetchall()
 
 
-    cur.execute("SELECT name FROM admin WHERE username = %s", (user_id,))
+    cur.execute("SELECT name FROM teachers WHERE TEACHER_ID = %s", (user_id,))
     name = cur.fetchone()
 
-    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE username = %s", (user_id,))
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE TEACHER_ID = %s", (user_id,))
     ay = cur.fetchall()
 
     cur.close()
@@ -263,29 +294,27 @@ def life3():
         student_data=student_data,
         ay=ay)
 
-        
-
 @app.route('/lifeline0')
 def life0():
-    if 'username' not in session:
+    if 'TEACHER_ID' not in session:
         flash('Please log in first', 'error')
         return redirect(url_for('login'))
 
-    user_id = session['username']
+    user_id = session['TEACHER_ID']
     
     cur = mysql.connection.cursor()
 
     cur.execute(
-    "SELECT ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, ACTION_REMARKS, ACADEMIC_YEAR "
+    "SELECT NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, ACADEMIC_YEAR "
     "FROM citestudents "
-    "WHERE NUMERIC_GRADE >= 3 AND username = %s",
+    "WHERE NUMERIC_GRADE >= 3 AND TEACHER_ID = %s",
     (user_id,))
     student_data = cur.fetchall()
 
-    cur.execute("SELECT name FROM admin WHERE username = %s", (user_id,))
+    cur.execute("SELECT NAME FROM teachers WHERE TEACHER_ID = %s", (user_id,))
     name = cur.fetchone()
 
-    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE username = %s", (user_id,))
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE TEACHER_ID = %s", (user_id,))
     ay = cur.fetchall()
 
     cur.close()
@@ -295,45 +324,81 @@ def life0():
         student_data=student_data,
         ay=ay)
 
-@app.route('/update_action_remarks', methods=['POST'])
-def update_action_remarks():
-    data = request.json
-    student_id = data.get('id')
-    action_remarks = data.get('action_remarks')
+@app.route('/takeaction', methods=['GET', 'POST'])
+def takeaction():
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
+        return redirect(url_for('login'))
 
-    # Ensure teacher is logged in
-    if 'username' not in session:
-        return jsonify({'message': 'Unauthorized'})
+    TEACHER_ID = session['TEACHER_ID']
 
-    teacher_id = session['username']
+    if request.method == 'POST':
+        STUDENT_NAME = request.form['STUDENT_NAME']
+        ACADEMIC_YEAR = request.form['ACADEMIC_YEAR']
+        ACTION_REMARKS = request.form['ACTION']
 
-    cursor = mysql.connection.cursor()
+        cur = mysql.connection.cursor()
 
-    # Update action remarks only for the logged-in teacher's students
-    if action_remarks == "":
-        cursor.execute("UPDATE citestudents SET ACTION_REMARKS = NULL WHERE ID = %s AND username = %s", (student_id, teacher_id))
+        cur.execute("UPDATE citestudents SET ACTION_REMARKS = %s WHERE NAME = %s AND TEACHER_ID = %s AND ACADEMIC_YEAR = %s",
+                    (ACTION_REMARKS, STUDENT_NAME, TEACHER_ID, ACADEMIC_YEAR))
+        
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Action updated successfully')
+        return redirect(url_for('takeaction'))
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT NAME FROM teachers WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    name = cur.fetchone()
+
+    cur.execute("SELECT NAME, ACADEMIC_YEAR FROM citestudents WHERE NUMERIC_GRADE >= 3 AND TEACHER_ID = %s", (TEACHER_ID,))
+    student = cur.fetchall()
+
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    ay = cur.fetchall()
+
+    cur.close()
+
+    return render_template('takeaction.html',
+        name=name,
+        student=student,
+        ay=ay)
+
+
+@app.route('/get_current_action', methods=['GET'])
+def get_current_action():
+    selected_student = request.args.get('student')
+    TEACHER_ID = session['TEACHER_ID']
+    ACADEMIC_YEAR = request.args.get('academic_year')
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT ACTION_REMARKS FROM citestudents WHERE NAME = %s AND TEACHER_ID = %s AND ACADEMIC_YEAR = %s",
+                (selected_student, TEACHER_ID, ACADEMIC_YEAR))
+    current_action = cur.fetchone()
+    cur.close()
+
+    if current_action:
+        return "ACTION: " + current_action[0]
     else:
-        cursor.execute("UPDATE citestudents SET ACTION_REMARKS = %s WHERE ID = %s AND username = %s", (action_remarks, student_id, teacher_id))
-    mysql.connection.commit()
-    cursor.close()
-    
-    return jsonify()
+        return "ACTION: NO ACTION YET"
+
+
 
 
 
 @app.route('/feedback')
 def feedbackpage():
-    if 'username' not in session:
-        flash('Please log in first', 'error')
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
         return redirect(url_for('login'))
 
-    user_id = session['username']
+    TEACHER_ID = session['TEACHER_ID']
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT name FROM admin WHERE username = %s", (user_id,))
+    cur.execute("SELECT name FROM teachers WHERE TEACHER_ID = %s", (TEACHER_ID,))
     name = cur.fetchone()
 
-    # Fetch feedbacks and corresponding times
     cur.execute("SELECT FEEDBACKS, TIME_SENT FROM feedback WHERE NAME = %s", (name,))
     feedback_data = cur.fetchall()
 
@@ -346,6 +411,88 @@ def feedbackpage():
         feedback_data=feedback_data,
         feednum=feednum)
 
+
+@app.route('/student-info')
+def studentinfo():
+
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
+        return redirect(url_for('login'))
+
+    TEACHER_ID = session['TEACHER_ID']
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT name FROM teachers WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    name = cur.fetchone()
+
+    cur.execute("SELECT STUDENT_ID FROM students")
+    studid = cur.fetchone()
+
+    cur.execute("SELECT FULL_NAME FROM students")
+    studname = cur.fetchone()
+
+    cur.execute("SELECT FB_LINK FROM students")
+    fblink = cur.fetchone()
+
+    cur.execute("SELECT PHONE_NUMBER FROM students")
+    pn = cur.fetchone()
+
+    cur.execute("SELECT STREET FROM students")
+    st = cur.fetchone()
+
+    cur.execute("SELECT CITY FROM students")
+    ct = cur.fetchone()
+
+    cur.execute("SELECT MUNICIPALITY FROM students")
+    mn = cur.fetchone()
+    
+    cur.execute("SELECT ZIP_CODE FROM students")
+    zc = cur.fetchone()
+
+
+    cur.close()
+    return render_template('studentinfo.html',
+        name=name,
+        studid=studid,
+        studname=studname,
+        fblink=fblink,
+        pn=pn,
+        st=st,
+        ct=ct,
+        mn=mn,
+        zc=zc)
+
+@app.route('/student-remarks')
+def studentremarks():
+    if 'TEACHER_ID' not in session:
+        flash('Please log in first')
+        return redirect(url_for('login'))
+
+    TEACHER_ID = session['TEACHER_ID']
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT name FROM teachers WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    name = cur.fetchone()
+
+    cur.execute(
+    "SELECT NAME, STUDENT_ID, SUBJECT, ACADEMIC_YEAR,ACTION_REMARKS "
+    "FROM citestudents "
+    "WHERE NUMERIC_GRADE >= 3 AND TEACHER_ID = %s",
+    (TEACHER_ID,))
+    student_data = cur.fetchall()
+
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    ay = cur.fetchall()
+
+    cur.close()
+
+    return render_template('studentremarks.html',
+        name=name,
+        student_data=student_data,
+        ay=ay)
+
+
+
 @app.route('/logout', methods=['POST'])
 def logout():
     session.pop('username', None)
@@ -356,34 +503,13 @@ def logout():
 
 
 #*** STUDENT ***
-@app.route('/student-login', methods=['GET', 'POST'])
-def studentlog():
-    if request.method == 'POST':
-        STUDENT_ID = request.form['STUDENT_ID']
-        PASSWORD = request.form['PASSWORD']
-
-        
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM students WHERE STUDENT_ID = %s AND PASSWORD = %s", (STUDENT_ID, PASSWORD))
-        studentid = cur.fetchone()
-        cur.close()
-
-        if studentid:
-            session['STUDENT_ID'] = STUDENT_ID  # para ma retrieve kung sin o nga user
-            return redirect(url_for('studentpage'))  # sulod sa student page if succesfull
-
-        else:
-            flash('Incorrect Credentials. Try again!', 'error') 
-
-    return render_template('studentlog.html')
-
 @app.route('/student-register', methods=['GET','POST'])
 def studentreg():
     if request.method == 'POST':
-        STUDENT_ID = request.form['STUDENT_ID']  
+        STUDENT_ID = request.form['STUDENT_ID']
+        STUDENT_MAIL = request.form['STUDENT_MAIL']
         FULL_NAME = request.form['FULL_NAME']
         PASSWORD = request.form['PASSWORD']
-
         
         #validation if ang student id ara na sa table nga students
         cur = mysql.connection.cursor()
@@ -395,8 +521,8 @@ def studentreg():
             flash('Student ID already exists.')
         else:
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO students (STUDENT_ID, FULL_NAME, PASSWORD) VALUES (%s, %s, %s)", 
-            (STUDENT_ID, FULL_NAME, PASSWORD))
+            cur.execute("INSERT INTO students (STUDENT_ID, STUDENT_MAIL, FULL_NAME, PASSWORD) VALUES (%s, %s, %s, %s)", 
+            (STUDENT_ID, STUDENT_MAIL, FULL_NAME, PASSWORD))
             mysql.connection.commit() #kung wala ga exist ang student it amo ni commit ya
             cur.close()
 
@@ -406,51 +532,51 @@ def studentreg():
     return render_template('studentreg.html')
 
 
+@app.route('/student-login', methods=['GET', 'POST'])
+def studentlog():
+
+    if request.method == 'POST':
+        STUDENT_ID = request.form['STUDENT_ID']
+        PASSWORD = request.form['PASSWORD']
+
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM students WHERE STUDENT_ID = %s and PASSWORD = %s ", (STUDENT_ID, PASSWORD))
+        check = cur.fetchall()
+        cur.close() 
+          
+
+        if check:
+            session['STUDENT_ID'] = STUDENT_ID
+            return redirect(url_for('studentprofile'))  
+        else:
+            flash('Incorrect Credentials. Try again!') 
+        
+    return render_template('studentlog.html')
+
 @app.route('/student-page')
 def studentpage():
     if 'STUDENT_ID' not in session:
         flash('Please log in first', 'error')
         return redirect(url_for('studentlog'))
 
-    # Get the logged-in teacher's ID
     STUDENT_ID = session['STUDENT_ID']
 
     cur = mysql.connection.cursor()
     cur.execute("SELECT FULL_NAME FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
     fn = cur.fetchone()
 
-    cur.execute("SELECT SUBJECT FROM citestudents WHERE STUDENT_ID = %s", (STUDENT_ID,))
-    subject = cur.fetchall()
+    cur.execute("SELECT SUBJECT, FACULTY_NAME, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, ACADEMIC_YEAR FROM citestudents WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    student_data = cur.fetchall()
 
-    cur.execute("SELECT P1 FROM citestudents WHERE STUDENT_ID = %s", (STUDENT_ID,))
-    p1 = cur.fetchall()
-
-    cur.execute("SELECT P2 FROM citestudents WHERE STUDENT_ID = %s", (STUDENT_ID,))
-    p2 = cur.fetchall()
-
-    cur.execute("SELECT P3 FROM citestudents WHERE STUDENT_ID = %s", (STUDENT_ID,))
-    p3 = cur.fetchall()
-
-    cur.execute("SELECT FINAL_GRADE FROM citestudents WHERE STUDENT_ID = %s", (STUDENT_ID,))
-    fg = cur.fetchall()
-
-    cur.execute("SELECT NUMERIC_GRADE FROM citestudents WHERE STUDENT_ID = %s", (STUDENT_ID,))
-    ng = cur.fetchall()
-
-    cur.execute("SELECT username FROM citestudents WHERE STUDENT_ID = %s", (STUDENT_ID,))
-    facn = cur.fetchall()
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents")
+    ay = cur.fetchall()
 
     cur.close()
 
     return render_template('studpage.html',
         fn=fn,
-        subject=subject,
-        p1=p1,
-        p2=p2,
-        p3=p3,
-        fg=fg,
-        ng=ng,
-        facn=facn)
+        student_data=student_data,
+        ay=ay)
 
 @app.route('/student-feedback', methods=['GET', 'POST'])
 def studentfeedback():
@@ -461,6 +587,12 @@ def studentfeedback():
         return redirect(url_for('studentlog'))
 
     student_id = session['STUDENT_ID']
+
+    if request.method == 'POST':
+        if 'TEACHER_ID' not in request.form:
+            flash('Please select a teacher')
+            return redirect(url_for('studentfeedback'))
+
 
     if request.method == 'POST':
         teacher_id = request.form['TEACHER_ID']
@@ -475,7 +607,7 @@ def studentfeedback():
         total_rating = sum(int(rate) for rate in [q1rate, q2rate, q3rate, q4rate, q5rate, q6rate])
     
         cur = mysql.connection.cursor()
-        cur.execute("SELECT NAME FROM admin")
+        cur.execute("SELECT NAME FROM teachers")
         teacher_exists = cur.fetchall()
 
         if teacher_exists:
@@ -488,13 +620,12 @@ def studentfeedback():
             cur.close()
             flash('Feedback Sent!')
 
-    # para mag fetch sang data pakadto sa template
     cur = mysql.connection.cursor()
 
     cur.execute("SELECT FULL_NAME FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
     fn = cur.fetchone()
 
-    cur.execute("SELECT NAME FROM admin")
+    cur.execute("SELECT NAME FROM teachers")
     teachers = cur.fetchall()
 
     cur.close()
@@ -504,19 +635,73 @@ def studentfeedback():
         fn=fn,
         teachers=teachers)
 
-@app.route('/student-profile')
+@app.route('/student-profile', methods=['GET','POST'])
 def studentprofile():
     if 'STUDENT_ID' not in session:
         flash('Please log in first', 'error')
         return redirect(url_for('studentlog'))
 
-    # Get the logged-in teacher's ID
     STUDENT_ID = session['STUDENT_ID']
+
+    if request.method == 'POST':
+        cur = mysql.connection.cursor()
+
+        PERSONAL_MAIL = request.form['PERSONAL_MAIL']
+        PHONE_NUMBER = request.form['PHONE_NUMBER']
+        FB_LINK = request.form['FB_LINK']
+        STREET = request.form['STREET']
+        CITY = request.form['CITY']
+        MUNICIPALITY = request.form['MUNICIPALITY']
+        ZIP_CODE = request.form['ZIP_CODE']
+
+        if PERSONAL_MAIL:
+            cur.execute("UPDATE students SET PERSONAL_MAIL = %s WHERE STUDENT_ID = %s", (PERSONAL_MAIL, STUDENT_ID))
+        if PHONE_NUMBER:
+            cur.execute("UPDATE students SET PHONE_NUMBER = %s WHERE STUDENT_ID = %s", (PHONE_NUMBER, STUDENT_ID))
+        if FB_LINK:
+            cur.execute("UPDATE students SET FB_LINK = %s WHERE STUDENT_ID = %s", (FB_LINK, STUDENT_ID))
+        if STREET:
+            cur.execute("UPDATE students SET STREET = %s WHERE STUDENT_ID = %s", (STREET, STUDENT_ID))
+        if CITY:
+            cur.execute("UPDATE students SET CITY = %s WHERE STUDENT_ID = %s", (CITY, STUDENT_ID))
+        if MUNICIPALITY:
+            cur.execute("UPDATE students SET MUNICIPALITY = %s WHERE STUDENT_ID = %s", (MUNICIPALITY, STUDENT_ID))
+        if ZIP_CODE:
+            cur.execute("UPDATE students SET ZIP_CODE = %s WHERE STUDENT_ID = %s", (ZIP_CODE, STUDENT_ID))
+
+        flash('Update successful')
+
+        mysql.connection.commit()
+        cur.close()
 
     cur = mysql.connection.cursor()
 
+    cur.execute("SELECT PERSONAL_MAIL FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    pm = cur.fetchone()
+
+    cur.execute("SELECT PHONE_NUMBER FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    pn = cur.fetchone()
+
+    cur.execute("SELECT FB_LINK FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    fb = cur.fetchone()
+
+    cur.execute("SELECT STREET FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    st = cur.fetchone()
+
+    cur.execute("SELECT CITY FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    ct = cur.fetchone()
+
+    cur.execute("SELECT MUNICIPALITY FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    mc = cur.fetchone()
+
+    cur.execute("SELECT ZIP_CODE FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    zc = cur.fetchone()
+
     cur.execute("SELECT FULL_NAME FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
     fn = cur.fetchone()
+
+    cur.execute("SELECT STUDENT_MAIL FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
+    sm = cur.fetchone()
 
     cur.execute("SELECT STUDENT_ID FROM students WHERE STUDENT_ID = %s", (STUDENT_ID,))
     sid = cur.fetchone()
@@ -525,27 +710,37 @@ def studentprofile():
 
     return render_template('profile.html',
         fn=fn,
-        sid=sid)
+        sid=sid,
+        sm=sm,
+        pm=pm,
+        pn=pn,
+        fb=fb,
+        st=st,
+        ct=ct,
+        mc=mc,
+        zc=zc)
     
 @app.route('/studlogout', methods=['POST'])
 def studlogout():
     session.pop('username', None)
     return redirect(url_for('studentlog'))
 
+#*****DEAN******
+
 @app.route('/dean-login', methods=['GET', 'POST'])
 def deanlogin():
     if request.method == 'POST':
-        TEACHER_ID = request.form['TEACHER_ID']
+        DEAN_ID = request.form['DEAN_ID']
         PASSWORD = request.form['PASSWORD']
 
         # validation if chakto ang user sa database admin table
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM dean WHERE TEACHER_ID = %s AND PASSWORD = %s", (TEACHER_ID, PASSWORD))
+        cur.execute("SELECT * FROM dean WHERE DEAN_ID = %s AND PASSWORD = %s", (DEAN_ID, PASSWORD))
         user = cur.fetchone()
         cur.close()
 
         if user:
-            session['TEACHER_ID'] = TEACHER_ID  #para mag store sang username sa session
+            session['DEAN_ID'] = DEAN_ID  #para mag store sang username sa session
             return redirect(url_for('deanpage'))  #makadto sa adminpage if correct validation
         else:
             flash('Invalid Credentials! Try Again!', 'error')
@@ -554,48 +749,101 @@ def deanlogin():
 
 @app.route('/dean-page')
 def deanpage():
-
-    if 'TEACHER_ID' not in session:
+    if 'DEAN_ID' not in session:
         flash('Please log in first', 'error')
         return redirect(url_for('deanlogin'))
 
-    TEACHER_ID = session['TEACHER_ID']
+    DEAN_ID = session['DEAN_ID']
+    selected_semester = request.args.get('semester')
 
-    # para mag fetch sang data pakadto sa template
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT NAME FROM dean WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    cur.execute("SELECT NAME FROM dean WHERE DEAN_ID = %s", (DEAN_ID,))
     dn = cur.fetchone()
 
-    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE < 2 ")
-    lifeline5 = cur.fetchone()
+    if selected_semester == "All" or selected_semester is None:
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE < 2")
+        lifeline5 = cur.fetchone()
 
-    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 2 AND 3 ")
-    lifeline3 = cur.fetchone()
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 2 AND NUMERIC_GRADE < 3")
+        lifeline3 = cur.fetchone()
 
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 3")
+        lifeline0 = cur.fetchone()
 
-    cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >=3 ")
-    lifeline0 = cur.fetchone()
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE < 2")
+        l5 = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 2 AND NUMERIC_GRADE < 3")
+        l3 = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >=3")
+        l0 = cur.fetchone()[0]
+
+        cur.execute(" SELECT FILENAME, COUNT(*) AS count FROM citestudents WHERE NUMERIC_GRADE >= 3 GROUP BY FILENAME ORDER BY count DESC LIMIT 5")
+        sectionlife0 = cur.fetchall()
+    else:
+        # Query na inaayos batay sa napiling taon
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE < 2 AND ACADEMIC_YEAR = %s", (selected_semester,))
+        lifeline5 = cur.fetchone()
+
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 2 AND NUMERIC_GRADE < 3 AND ACADEMIC_YEAR = %s", (selected_semester,))
+        lifeline3 = cur.fetchone()
+
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 3 AND ACADEMIC_YEAR = %s", (selected_semester,))
+        lifeline0 = cur.fetchone()
+
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE < 2 AND ACADEMIC_YEAR = %s", (selected_semester,))
+        l5 = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >= 2 AND NUMERIC_GRADE < 3 AND ACADEMIC_YEAR = %s", (selected_semester,))
+        l3 = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM citestudents WHERE NUMERIC_GRADE >=3 AND ACADEMIC_YEAR = %s", (selected_semester,))
+        l0 = cur.fetchone()[0]
+
+        cur.execute(" SELECT FILENAME, COUNT(*) AS count FROM citestudents WHERE NUMERIC_GRADE >= 3 AND ACADEMIC_YEAR = %s GROUP BY FILENAME ORDER BY count DESC LIMIT 5", (selected_semester,))
+        sectionlife0 = cur.fetchall()
+
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents")
+    ay = cur.fetchall()
 
     cur.close()
+
+    chartstat = [
+        ['CITE', 'LIFELINES'],
+        ['Lifeline5', l5],
+        ['Lifeline3', l3],  
+        ['Lifeline0', l0]   
+    ]
+
+    chartstatsss = [['LIFELINE 0', 'by SECTIONS']]
+    for filename, count in sectionlife0:
+        if filename.endswith('.csv'):
+            filename = filename.rsplit('.', 1)[0]
+        chartstatsss.append([filename, count])
 
     return render_template('deanpage.html',
         dn=dn,
         lifeline5=lifeline5,
         lifeline3=lifeline3,
-        lifeline0=lifeline0)
+        lifeline0=lifeline0,
+        chartstat=chartstat,
+        chartstatsss=chartstatsss,
+        ay=ay)
+
 
 @app.route('/dean-lifeline5')
 def deanlife5():
-    if 'TEACHER_ID' not in session:
+    if 'DEAN_ID' not in session:
         flash('Please log in first', 'error')
         return redirect(url_for('deanlogin'))
 
-    TEACHER_ID = session['TEACHER_ID']
+    DEAN_ID = session['DEAN_ID']
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT NAME FROM dean WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    cur.execute("SELECT NAME FROM dean WHERE DEAN_ID = %s", (DEAN_ID,))
     name = cur.fetchone()
 
     cur.execute("SELECT ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, ACADEMIC_YEAR "
@@ -615,15 +863,15 @@ def deanlife5():
 
 @app.route('/dean-lifeline3')
 def deanlife3():
-    if 'TEACHER_ID' not in session:
+    if 'DEAN_ID' not in session:
         flash('Please log in first', 'error')
         return redirect(url_for('deanlogin'))
 
-    TEACHER_ID = session['TEACHER_ID']
+    DEAN_ID = session['DEAN_ID']
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT NAME FROM dean WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    cur.execute("SELECT NAME FROM dean WHERE DEAN_ID = %s", (DEAN_ID,))
     name = cur.fetchone()
 
     cur.execute("SELECT ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, ACADEMIC_YEAR "
@@ -642,20 +890,20 @@ def deanlife3():
 
 @app.route('/dean-lifeline0')
 def deanlife0():
-    if 'TEACHER_ID' not in session:
+    if 'DEAN_ID' not in session:
         flash('Please log in first', 'error')
         return redirect(url_for('deanlogin'))
 
-    TEACHER_ID = session['TEACHER_ID']
+    DEAN_ID = session['DEAN_ID']
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT NAME FROM dean WHERE TEACHER_ID = %s", (TEACHER_ID,))
+    cur.execute("SELECT NAME FROM dean WHERE DEAN_ID = %s", (DEAN_ID,))
     name = cur.fetchone()
 
 
     cur.execute(
-    "SELECT ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, ACTION_REMARKS, username, ACADEMIC_YEAR "
+    "SELECT ID, NAME, STUDENT_ID, SUBJECT, P1, P2, P3, FINAL_GRADE, NUMERIC_GRADE, ACTION_REMARKS, FACULTY_NAME, ACADEMIC_YEAR "
     "FROM citestudents "
     "WHERE NUMERIC_GRADE >= 3 ")
     data0 = cur.fetchall()
@@ -670,12 +918,41 @@ def deanlife0():
         data0=data0,
         ay=ay)
 
+
+@app.route('/action-taken')
+def actiontaken():
+    if 'DEAN_ID' not in session:
+        flash('Please log in first')
+        return redirect(url_for('login'))
+
+    DEAN_ID = session['DEAN_ID']
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT NAME FROM dean")
+    name = cur.fetchone()
+
+    cur.execute(
+    "SELECT NAME, STUDENT_ID, SUBJECT, ACTION_REMARKS, ACADEMIC_YEAR, FACULTY_NAME "
+    "FROM citestudents "
+    "WHERE NUMERIC_GRADE >= 3")
+    student_data = cur.fetchall()
+
+    cur.execute("SELECT DISTINCT ACADEMIC_YEAR FROM citestudents")
+    ay = cur.fetchall()
+
+    cur.close()
+
+    return render_template('actiontaken.html',
+        name=name,
+        student_data=student_data,
+        ay=ay) 
+
 @app.route('/deanlogout', methods=['POST'])
 def deanlogout():
     return redirect(url_for('deanlogin'))
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=5000)
 
     

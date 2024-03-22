@@ -48,6 +48,9 @@
                         </li>
                     </ul>
                 </li>
+                <li>
+                    <a href="{{ url_for('actiontaken') }}">ACTION TAKEN</a>
+                </li>
             </ul>
 <div class="sidenav-footer ">
     <div class="small">
@@ -128,42 +131,66 @@
                 </div>
             </div>
         </div>
+<div class="mb-0">
+    <label for="sem">Filter by Academic Year:</label>
+    <select id="semesterSelect" class="form-control" onchange="handleSemesterChange(this)">
+        <option value="All">All</option>
+        {% for i in ay %}
+            <option>{{ i[0] }}</option>
+        {% endfor %}
+    </select>
+</div>
 
+<div class="charts-container">
 
+            <div id="piechart" class="chart"></div>
+            <div id="piechart_3d" class="chart"></div>
+        </div>
+
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+       <script type="text/javascript">
+    // Load google charts
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawCharts);
+
+    // Draw the charts and set the chart values
+    function drawCharts() {
+        // Chart 1
+        var data = google.visualization.arrayToDataTable({{ chartstat|safe }});
+        var options = {
+            'title': 'CITE LIFELINE',
+            'width': 700,
+            'height': 500,
+            'slices': {
+                0: { color: 'green' },   // LIFELINE(0)
+                1: { color: 'yellow' },// LIFELINE(3)
+                2: { color: 'red' }, // LIFELINE(5)
+            }
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+
+        // Chart 2
+        var data3D = google.visualization.arrayToDataTable({{ chartstatsss|safe }});
+        var options3D = {
+            'title': 'CITE LIFELINE0 by (SECTION)',
+            'is3D': true,
+            'width': 700,
+            'height': 500,
+        };
+
+        var chart3D = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart3D.draw(data3D, options3D);
+    }
+</script>
+    </div>
+</div>
 </div>           
 </div>
-<br> <br> <br>
-<canvas id="myChart" style="width:100%;max-width:900px padding-left:10px"></canvas>
 
-<script>
-const xValues = ["LIFELINE0", "LIFELINE3", "LIFELINE5"];
-const yValues = [55, 49, 44];
-const barColors = [
-  
-  "#b91d47",
-  "#00aba9",
-  "#2b5797"
- 
- 
-];
 
-new Chart("myChart", {
-  type: "pie",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    title: {
-      display: true,
-      text: "CITE LIFELINE"
-    }
-  }
-});
-</script>
 
 
 </body>
@@ -186,4 +213,23 @@ $(document).ready(function () {
                 $('#sidebar').toggleClass('active');
             });
         });
+</script>
+<script>
+    $(document).ready(function () {
+        var selectedSemester = new URLSearchParams(window.location.search).get('semester');
+        if (selectedSemester === 'All' || !selectedSemester) {
+            $('#semesterSelect').val('All');
+        } else {
+            $('#semesterSelect').val(selectedSemester);
+        }
+
+        $('#semesterSelect').on('change', function () {
+            var selectedSemester = $(this).val(); // Get the selected academic year
+            if (selectedSemester === 'All') {
+                window.location.href = "{{ url_for('deanpage') }}";
+            } else {
+                window.location.href = "{{ url_for('deanpage') }}?semester=" + selectedSemester;
+            }
+        });
+    });
 </script>

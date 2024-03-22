@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
+    <link href="{{ url_for('static', filename='takeaction.css') }}" rel="stylesheet" type="text/css" >
+    <title>TAKE ACTION</title>
+</head>
+<body>
+<div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>LIFELINE <img class="mr-3" src="static/img/cubers.png" alt="" width="48" height="48"></h3>
+            </div>
+
+<ul class="list-unstyled components">
+                <p>Dashboard</p>
+                <li>
+                    <a href="{{ url_for('adminpage') }}">HOME</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS</a>
+            
+                </li>
+                <li>
+                    <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
+                    <ul class="collapse list-unstyled" id="lifelineSubmenu">
+                        <li>
+                            <a href="{{ url_for('life5') }}">LIFELINE(5)</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('life3') }}">LIFELINE(3)</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('life0') }}">LIFELINE(0)</a>
+                        </li>
+                    </ul>
+                </li>
+
+                  <li>
+                    <a href="#studentcredentials" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">STUDENT CREDENTIALS</a>
+                    <ul class="collapse list-unstyled" id="studentcredentials">
+                        <li>
+                            <a href="{{ url_for('studentinfo') }}">STUDENT INFO</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('takeaction') }}">TAKE ACTION</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('studentremarks') }}">STUDENT REMARKS</a>
+                        </li>  
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ url_for('feedbackpage') }}">FEEDBACKS</a>
+                </li>
+            </ul>
+<div class="sidenav-footer ">
+    <div class="small">
+        <p>© 2024 CUBERS TIGBAUAN <br> All rights reserved.</p>
+    </div>
+</div>
+        </nav>
+
+
+        <!-- Page Content  -->
+<div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-c-yg">
+
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <h4 class="container-fluid">{{ name[0] }} !</h4>
+<form id="logoutForm" action="{{ url_for('logout') }}" method="post" style="display: inline;">
+        <button type="button" id="logoutBtn" class="btn btn-danger btn-sm">
+            <span class="fas fa-sign-out-alt"></span> Log out
+        </button>
+</form>        </div>
+            </nav>
+<br><br><br><br>
+<section class="h-50 gradient-form">
+  <div class="container py-5 h-50">
+    <div class="row d-flex justify-content-center align-items-center h-50">
+      <div class="col-xl-10">
+        <div class="card rounded-3 text-black">
+          <div class="row g-0">
+            <div class="col-lg-6">
+              <div class="card-body p-md-5 mx-md-4">
+                <div class="text-center">
+                   {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                <ul id="flash-messages" class="alert alert-success pl-5">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+                    {% endif %}
+               {% endwith %}
+                  <img src="static/img/action.jpg"
+                    style="width: 185px;" alt="logo">
+                  <h5 class="mt-1 mb-3 pb-1"></h5>
+                </div>
+                  <form class="mx-1 mx-md-4" action="{{ url_for('takeaction') }}" method="POST">
+                    <div class="form-outline mb-3">
+                        <h6 class="mb-0">
+                            <label for="sem">SELECT SEMESTER :</label>
+                            <select name="ACADEMIC_YEAR" id="sem" class="form-control">
+                                <option value="All">All</option>
+                                {% for i in ay %}
+                                <option>{{ i[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </h6>
+                    </div>
+                    <label for="student">SELECT STUDENT</label>
+                    <select name="STUDENT_NAME" id="STUDENT_NAME" required>
+                        <option disabled hidden selected>Select a Student</option>
+                        {% for i in student %}
+                        <option data-sem="{{ i[1] }}" value="{{i[0]}}">{{i[0]}}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-outline mb-4"><br>
+                    <div id="current-action-container">
+                    <h6 id="current-action">ACTION: NO ACTION YET</h6>
+                    <br>
+                     </div>
+                        <label class="form-label" for="form2Example22"><strong>ACTION TO TAKE</strong></label>
+                        <br>
+                        <label class="m-b-xs">
+                            <input type="radio" name="ACTION" value="F2F EVALUATION" required /> F2F EVALUATION
+                        </label>
+                        <label class="m-b-xs">
+                            <input type="radio" name="ACTION" value="CALL EVALUATION " required /> Call EVALUATION
+                        </label>
+                        <label class="m-b-xs">
+                            <input type="radio" name="ACTION" value="NO ACTION YET" required /> Remove Action
+                        </label>
+                    </div>
+
+                    <div class="text-center pt-1 mb-3 pb-1">
+                        <input class="btn btn-warning btn-block fa-lg online-gradient-generated mb-3" type="submit" value="TAKE ACTION">
+                    </div>
+                </form>
+
+              </div>
+            </div>
+            <div class="col-lg-6 d-flex align-items-center online-gradient-generated">
+              <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                <img src="static/img/citelogo.jpg"
+                    style="display: block; margin-left: auto; margin-right: auto; border-radius: 50%; width: 50%;"alt="logo">
+                <h4 class="mb-4 h4ni">CUBER LIFELINE : BRIDGING STUDENT AND TEACHER FOR ACADEMIC SUCCESS</h4>
+                <p class="small mb-0 pni">A Capstone project presented to the Faculty of the College of Information Technology Education (CITE) PHINMA University of Iloilo</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+</div> <!-- End of CONTENT -->         
+</div> <!-- End of Wrapper -->
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        $('#logoutBtn').on('click', function () {
+            var result = confirm("Are you sure you want to log out?");
+            if (result) {
+                $('#logoutForm').submit();
+            }
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+</script>
+<script>
+    document.getElementById('sem').addEventListener('change', function() {
+        var selectedSem = this.value;
+        var options = document.querySelectorAll('#STUDENT_NAME option');
+
+        options.forEach(function(option) {
+            var sem = option.getAttribute('data-sem');
+            if (selectedSem === "All" || sem === selectedSem) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    });
+</script>
+<script>
+    document.getElementById('STUDENT_NAME').addEventListener('change', function() {
+        var selectedStudent = this.value;
+        var currentActionElement = document.getElementById('current-action');
+
+        // Make AJAX request to fetch current action for the selected student
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/get_current_action?student=' + selectedStudent, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var currentAction = xhr.responseText;
+                currentActionElement.textContent = currentAction;
+            }
+        };
+        xhr.send();
+    });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      var flashMessages = document.getElementById('flash-messages');
+      if (flashMessages) {
+        flashMessages.style.display = 'none';
+      }
+    }, 2000); 
+  });
+</script>

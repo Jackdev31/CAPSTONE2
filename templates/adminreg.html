@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 
     <!-- Font Awesome JS -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
-  <link href="{{ url_for('static', filename='studentreg.css') }}" rel="stylesheet" type="text/css" >
-	<title>LL STUDENT REGISTRATION</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
+    <link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet" type="text/css" >
+    <title>LL TEACHER REGISTER</title>
 </head>
 <body>
 <div class="backgroundni">
@@ -23,7 +23,7 @@
         <div class="card rounded-3 text-black">
           <div class="row g-0">
             <div class="col-lg-6">
-              <form action="{{ url_for('student') }}" method="post" style="display: inline;">
+               <form action="{{ url_for('index') }}" method="post" style="display: inline;">
                <button type="submit" class="btn btn-light btn-lg">
                 <span class="fa fa-arrow-circle-left"></span>
               </button>
@@ -32,65 +32,64 @@
                 <div class="text-center">
                   <img src="static/img/cubers.png"
                     style="width: 185px;" alt="logo">
-                  <h4 class="mt-1 mb-3 pb-1">STUDENT REGISTRATION!</h4>
+                  <h5 class="mt-1 mb-3 pb-1">TEACHER REGISTER!</h5>
                 </div>
-
                 {% with messages = get_flashed_messages() %}
                   {% if messages %}
-              <ul class="alert alert-danger pl-5">
+              <ul class="alert alert-success pl-5">
                 {% for message in messages %}
               <li>{{ message }}</li>
                 {% endfor %}
               </ul>
                   {% endif %}
                 {% endwith %}
-              
-                <form class="mx-1 mx-md-4" action="{{ url_for('studentreg') }}" method="POST">
+
+
+                <form class="mx-1 mx-md-4" action="{{ url_for('adminreg') }}" method="POST">
+                  <div class="form-outline mb-2">
+                    <label class="form-label" for="form2Example11">TEACHER ID</label>
+                    <input type="text" name="TEACHER_ID" id="form2Example11" class="form-control"
+                      placeholder="Enter Teacher ID"  required />
+                  </div>
 
                   <div class="form-outline mb-2">
-                    <label class="form-label" for="form2Example11">STUDENT ID</label>
-                    <input type="text" name="STUDENT_ID" id="form2Example11" class="form-control"
-                      placeholder="Enter Student ID"  required />
+                    <label class="form-label" for="form2Example11">NAME</label>
+                    <input type="text" name="NAME" id="form2Example11" class="form-control"
+                      placeholder="Enter Name"  required />
                   </div>
 
                   <div class="form-outline mb-2">
                     <label class="form-label" for="form2Example11">UI-MAIL</label>
-                    <input type="email" name="STUDENT_MAIL" id="form2Example11" class="form-control"
-                      placeholder="Enter UI-MAIL"  required />
-                  </div>                 
-
-                  <div class="form-outline mb-2">
-                    <label class="form-label" for="form2Example11">NAME</label>
-                    <input type="text"  name="FULL_NAME" id="form2Example11" class="form-control"
-                      placeholder="Lastname Firstname"  required />
+                    <input type="email" name="UIMAIL" id="form2Example11" class="form-control"
+                      placeholder="Enter UI-mail"  required />
                   </div>
 
                   <div class="form-outline mb-2">
                     <label class="form-label" for="form2Example22">PASSWORD</label>
-                    <input type="password" name="PASSWORD" id="myInput" class="form-control" placeholder="Enter Password" required
-                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
+                    <input type="password" name="PASSWORD" id="myInput" class="form-control" placeholder="Enter Password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
                     title="Must contain at least one number, one uppercase and lowercase letter, one special character, and at least 8 or more characters" />
 
-                    <input class="palagpat mt-3"type="checkbox" onclick="myFunction()"> Show Password
+                    <br>
+                    <input type="checkbox" onclick="myFunction()"> Show Password
                   </div>
 
-                  <div class="text-center pt-1 mb-3 pb-1">
-                    <input class="btn btn-success btn-block fa-lg online-gradient-generated mb-2" type="submit" value="CREATE">
+                  <div class="text-center pt-1 mb-2 pb-1">
+                    <input class="btn btn-warning btn-block fa-lg online-gradient-generated mb-3" type="submit" value="REGISTER">
                   </div>
                   <div class="d-flex align-items-center justify-content-center pb-4">
                     <p class="mb-0">Login now?</p> &nbsp;
-                    <a href="{{ url_for('studentlog') }}" class="btn btn-outline-success">Click me!</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-danger">Click me!</a>
                   </div>
-
                 </form>
+
               </div>
             </div>
             <div class="col-lg-6 d-flex align-items-center online-gradient-generated">
               <div class="text-white px-3 py-4 p-md-5 mx-md-4">
-              	<img src="static/img/uilogo.png"
-                    style="display: block; margin-left: auto; margin-right: auto; width: 50%;"alt="logo">
-                <h4 class="mb-4">CUBER LIFELINE : Bridging STUDENT and TEACHER for ACADEMIC Success</h4>
-                <p class="small mb-0">A Capstone project presented to the Faculty of the College of Information Technology Education (CITE) PHINMA University of Iloilo</p>
+                <img src="static/img/citelogo.jpg"
+                    style="display: block; margin-left: auto; margin-right: auto; border-radius: 50%; width: 50%;"alt="logo">
+                <h4 class="mb-4 h4ni">CUBER LIFELINE : BRIDGING STUDENT AND TEACHER FOR ACADEMIC SUCCESS</h4>
+                <p class="small mb-0 pni">A Capstone project presented to the Faculty of the College of Information Technology Education (CITE) PHINMA University of Iloilo</p>
               </div>
             </div>
           </div>
@@ -112,3 +111,5 @@
   }
 }
 </script>
+
+

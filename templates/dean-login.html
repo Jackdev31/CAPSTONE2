@@ -32,7 +32,7 @@
                 <div class="text-center">
                   <img src="static/img/cubers.png"
                     style="width: 185px;" alt="logo">
-                  <h5 class="mt-1 mb-3 pb-1">ADMIN LOGIN!</h5>
+                  <h5 class="mt-1 mb-3 pb-1">DEAN LOGIN!</h5>
                 </div>
                 {% with messages = get_flashed_messages() %}
                   {% if messages %}
@@ -46,15 +46,16 @@
 
 
                 <form class="mx-1 mx-md-4" action="{{ url_for('deanlogin') }}" method="POST">
-                  <div class="form-outline mb-4">
-                    <label class="form-label" for="form2Example11">TEACHER ID</label>
-                    <input type="text" name="TEACHER_ID" id="form2Example11" class="form-control"
-                      placeholder="TEACHER ID"  required />
+                  <div class="form-outline mb-2">
+                    <label class="form-label" for="form2Example11">DEAN ID</label>
+                    <input type="text" name="DEAN_ID" id="form2Example11" class="form-control"
+                      placeholder="DEAN_ID"  required />
                   </div>
 
-                  <div class="form-outline mb-4">
+                  <div class="form-outline mb-2">
                     <label class="form-label" for="form2Example22">PASSWORD</label>
                     <input type="password" name="PASSWORD" id="form2Example22" class="form-control" placeholder="ENTER PASSWORD" required />
+                    <input class="palagpat mt-3"type="checkbox" onclick="myFunction()"> Show Password
                   </div>
 
                   <div class="text-center pt-1 mb-3 pb-1">
@@ -82,5 +83,16 @@
 </div>
 </body>
 </html>
+<script>
+  function myFunction() {
+  var x = document.getElementById("form2Example22");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+</script>
+
 
 

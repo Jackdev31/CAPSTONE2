@@ -28,14 +28,14 @@
                 <h3>LIFELINE <img class="mr-3" src="static/img/cubers.png" alt="" width="48" height="48"></h3>
             </div>
 
-            <ul class="list-unstyled components">
+<ul class="list-unstyled components">
                 <p>Dashboard</p>
                 <li>
                     <a href="{{ url_for('adminpage') }}">HOME</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('section1') }}">UPLOAD CLASS CSV</a>
-                    
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS</a>
+            
                 </li>
                 <li>
                     <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
@@ -51,6 +51,21 @@
                         </li>
                     </ul>
                 </li>
+
+                  <li>
+                    <a href="#studentcredentials" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">STUDENT CREDENTIALS</a>
+                    <ul class="collapse list-unstyled" id="studentcredentials">
+                        <li>
+                            <a href="{{ url_for('studentinfo') }}">STUDENT INFO</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('takeaction') }}">TAKE ACTION</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('studentremarks') }}">STUDENT REMARKS</a>
+                        </li>  
+                    </ul>
+                </li>
                 <li>
                     <a href="{{ url_for('feedbackpage') }}">FEEDBACKS</a>
                 </li>
@@ -59,7 +74,8 @@
     <div class="small">
         <p>© 2024 CUBERS TIGBAUAN <br> All rights reserved.</p>
     </div>
-</div>
+           
+
         </nav>
 
 
@@ -115,31 +131,21 @@
                                 <th>FINAL GRADE</th>
                                 <th class="text-center">NUMERIC GRADE</th>
                                 <th>ACADEMIC YEAR</th>
-                                <th class="text-center">ACTION</th>
-                                <th>ACTION REMARKS</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for i in student_data %}
                             <tr>
-                                <td><i class="fa fa-user" aria-hidden="true"></i> {{ i[1] }}</td>
+                                <td><i class="fa fa-user" aria-hidden="true"></i> {{ i[0] }}</td>
+                                <td>{{ i[1] }}</td>
                                 <td>{{ i[2] }}</td>
                                 <td>{{ i[3] }}</td>
                                 <td>{{ i[4] }}</td>
                                 <td>{{ i[5] }}</td>
-                                <td>{{ i[6] }}</td>
-                                <td class="text-center">{{ i[7] }}</td>
+                                <td class="text-center">{{ i[6] }}</td>
                                 
-                                <td class="text-center">{{i[8] }}</td>
-                                 <td>{{ i[10] }}</td>
-                                <td>
-                                    <button type="button"  class="btn btn-danger btn-sm" data-toggle="modal" data-target="#actionModal" onclick="openActionModal({{ i[0] }})">
-                                        <span class="fa fa-edit"></span> Action
-                                    </button>
-                                </td>
-                                <td id="actionRemarks{{ i[0] }}">
-                                    {{ i[9] }}
-                                </td>
+                                <td class="text-center">{{i[7] }}</td>
+                                 <td>{{ i[8] }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -201,8 +207,7 @@
         $.ajax({
             type: "POST",
             url: "/update_action_remarks",
-            contentType: "application/json",
-            data: JSON.stringify({ id: selectedStudentID, action_remarks: actionRemarks }),
+            data: { id: selectedStudentID, action_remarks: actionRemarks },
             success: function (response) {
                 console.log(response);
                 var actionRemarksCell = $('#actionRemarks' + selectedStudentID);
@@ -239,35 +244,33 @@ $(document).ready(function () {
 </script>
 <script>
     $(document).ready(function () {
-        // Initial filter based on selected semester
+        
         filterTableBySem($('#sem').val());
 
-        // Change event for semester dropdown
         $('#sem').change(function () {
             var selectedSem = $(this).val();
             filterTableBySem(selectedSem);
         });
 
-        // Function to filter table by semester
+      
         function filterTableBySem(selectedSem) {
-            // Show all rows first
+            
             $('#studentTable tbody tr').show();
 
-            // If "All" is selected, show all rows and return
             if (selectedSem === 'All') {
                 return;
             }
 
-            // Otherwise, hide rows that do not match the selected semester
+            
             $('#studentTable tbody tr').each(function () {
-                var rowSem = $(this).find('td:nth-child(9)').text().trim(); // Get the ninth cell (ACADEMIC YEAR)
+                var rowSem = $(this).find('td:nth-child(9)').text().trim(); 
                 if (selectedSem !== rowSem) {
                     $(this).hide();
                 }
             });
         }
 
-        // Search functionality
+
         $('#searchButton').on('click', function () {
             var input, filter, table, tr, td, i, txtValue;
             input = $('#searchInput').val().toUpperCase();
@@ -275,7 +278,7 @@ $(document).ready(function () {
             tr = table.find('tbody tr');
 
             tr.each(function () {
-                var rowSem = $(this).find('td:nth-child(9)').text().trim(); // Get the ninth cell (ACADEMIC YEAR)
+                var rowSem = $(this).find('td:nth-child(9)').text().trim(); 
                 if ($('#sem').val() === 'All' || $('#sem').val() === rowSem) {
                     td = $(this).find('td');
                     var found = false;

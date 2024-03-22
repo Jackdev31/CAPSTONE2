@@ -23,7 +23,7 @@
         <div class="card rounded-3 text-black">
           <div class="row g-0">
             <div class="col-lg-6">
-              <form action="{{ url_for('index') }}" method="post" style="display: inline;">
+              <form action="{{ url_for('student') }}" method="post" style="display: inline;">
                <button type="submit" class="btn btn-light btn-lg">
                 <span class="fa fa-arrow-circle-left"></span>
               </button>
@@ -32,7 +32,7 @@
                 <div class="text-center">
                   <img src="static/img/cubers.png"
                     style="width: 185px;" alt="logo">
-                  <h5 class="mt-1 mb-3 pb-1">LOGIN NOW!</h5>
+                  <h5 class="mt-1 mb-3 pb-1">STUDENT LOGIN NOW!</h5>
                 </div>
                 {% with messages = get_flashed_messages() %}
                   {% if messages %}
@@ -47,15 +47,17 @@
 
                 <form class="mx-1 mx-md-4" action="{{ url_for('studentlog') }}" method="POST">
 
-                  <div class="form-outline mb-4">
+                  <div class="form-outline mb-2">
                     <label class="form-label" for="form2Example11">Student ID</label>
-                    <input type="text" name="STUDENT_ID" id="form2Example11" class="form-control"
+                    <input type="text" name="STUDENT_ID" id="Studentid_ID" class="form-control"
                       placeholder="STUDENT-ID"  required />
                   </div>
 
-                  <div class="form-outline mb-4">
+                  <div class="form-outline mb-2">
                     <label class="form-label" for="form2Example22">Password</label>
-                    <input type="password" name="PASSWORD" id="form2Example22" class="form-control" placeholder="Enter Password" required />
+                    <input type="password" name="PASSWORD" id="Password_ID" class="form-control" placeholder="Enter Password" required />
+
+                    
                   </div>
 
                   <div class="text-center pt-1 mb-3 pb-1">
@@ -87,5 +89,15 @@
 </div>
 </body>
 </html>
+<script>
+  function myFunction() {
+  var x = document.getElementById("myInput");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+</script>
 
 

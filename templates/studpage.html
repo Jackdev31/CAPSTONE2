@@ -18,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="static/img/cubers.png">
     <link href="{{ url_for('static', filename='studpage.css') }}" rel="stylesheet" type="text/css" >
-    <title></title>
+    <title>STUDENT PAGE</title>
 </head>
 <body>
 <div class="wrapper">
@@ -72,12 +72,21 @@
                      
                 </div>
 </nav>
-
-<div class="container">
+<h1 class="text-center">PERFORMANCE</h1>
+<br>
+<div class="container ml-6">
     <div class="row bg-inf">
-        <div class="col-8 mb-3 mb-lg-5">
+        <h6 class="mb-0">
+            <label for="sem">Filter by Sem :</label>
+                <select id="sem" class="form-control">
+                    <option value="All">All</option>
+                        {% for i in ay %}
+                    <option>{{ i[0] }}</option>
+                        {% endfor %}
+                </select></h6>
+        <div class="col-9 mb-3 mb-lg-5"> <!-- Adjusted column size -->
             <div class="overflow-hidden card table-nowrap table-card">
-                <div class="table-responsive bg-muted">
+                <div class="table-responsive bg-muted" style="max-height:925px; overflow-y: auto;">
                     <table class="table mb-0">
                         <thead class="small text-uppercase bg-body text-dark bg-c-green">
                             <tr>
@@ -88,29 +97,31 @@
                                 <th>P3</th>
                                 <th class="text-center">FINAL GRADE</th>
                                 <th class="text-center">LIFELINE STATUS</th>
+                                <th class="text-center">ACADEMIC YEAR</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for i in range(subject|length) %}
+                             {% for student in student_data %}
                             <tr>
-                                <td class="text-center">{{ subject[i][0] }}</td>
-                                <td>{{ facn[i][0] }}</td>
-                                <td>{{ p1[i][0] }}</td>
-                                <td>{{ p2[i][0] }}</td>
-                                <td>{{ p3[i][0] }}</td>
-                                <td class="text-center">{{ fg[i][0] }}</td>
+                                <td class="text-center">{{ student[0] }}</td>
+                                <td>{{ student[1] }}</td>
+                                <td>{{ student[2] }}</td>
+                                <td>{{ student[3] }}</td>
+                                <td>{{ student[4] }}</td>
+                                <td class="text-center">{{ student[5] }}</td>
                                 <td class="text-center">
-                                    {% set numeric_grade = ng[i][0] | int %}
-                                    {% if numeric_grade < 2 %}
-                                        Lifeline 5
-                                    {% elif numeric_grade >= 2 and numeric_grade < 3 %}
-                                        Lifeline 3
-                                    {% elif numeric_grade >= 3 %}
-                                        Lifeline 0
-                                    {% endif %}
+                                {% set numeric_grade = student[6] | int %}
+                                {% if numeric_grade < 2 %}
+                                    Lifeline 5
+                                {% elif numeric_grade >= 2 and numeric_grade < 3 %}
+                                    Lifeline 3
+                                {% elif numeric_grade >= 3 %}
+                                    Lifeline 0
+                                {% endif %}
                                 </td>
+                                <td class="text-center">{{ student[7] }}</td>
                             </tr>
-                            {% endfor %}
+                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -132,4 +143,23 @@ $(document).ready(function () {
                 $('#sidebar').toggleClass('active');
             });
         });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#sem').change(function () {
+            var selectedSemester = $(this).val();
+            filterTableBySemester(selectedSemester);
+        });
+
+        function filterTableBySemester(selectedSemester) {
+            $('#content table tbody tr').each(function () {
+                var semester = $(this).find('td:last').text().trim();
+                if (selectedSemester === 'All' || selectedSemester === semester) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+    });
 </script>

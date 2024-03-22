@@ -89,15 +89,16 @@
   <!-- ... your existing code ... -->
 
 <form action="{{ url_for('studentfeedback') }}" method="POST" id="contact_form">
-  <div class="subject">
-    <label for="subject"></label>
-    <select name="TEACHER_ID" placeholder="Select Teacher" id="subject_input" required>
-      <option disabled hidden selected >Select a Teacher</option>
-      {% for i in teachers %}
-        <option  >{{i[0]}} </option>
-      {% endfor %}
+<div class="subject">
+    <label for="subject">Select Teacher</label>
+    <select name="TEACHER_ID" id="subject_input" required>
+        <option disabled hidden selected>Select a Teacher</option>
+        {% for i in teachers %}
+            <option>{{ i[0] }}</option>
+        {% endfor %}
     </select>
-  </div>
+</div>
+
 
 <div class="question1">
     <h6 id="q1" name="q1"> My teacher responds to my questions during class hours.</h6>

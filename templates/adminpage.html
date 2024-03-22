@@ -34,7 +34,7 @@
                     <a href="{{ url_for('adminpage') }}">HOME</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('section1') }}">UPLOAD CLASS CSV</a>
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS</a>
             
                 </li>
                 <li>
@@ -51,10 +51,25 @@
                         </li>
                     </ul>
                 </li>
+
+                  <li>
+                    <a href="#studentcredentials" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">STUDENT CREDENTIALS</a>
+                    <ul class="collapse list-unstyled" id="studentcredentials">
+                        <li>
+                            <a href="{{ url_for('studentinfo') }}">STUDENT INFO</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('takeaction') }}">TAKE ACTION</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('studentremarks') }}">STUDENT REMARKS</a>
+                        </li>  
+                    </ul>
+                </li>
                 <li>
                     <a href="{{ url_for('feedbackpage') }}">FEEDBACKS</a>
                 </li>
-                 </ul>
+            </ul>
 <div class="sidenav-footer ">
     <div class="small">
         <p>© 2024 CUBERS TIGBAUAN <br> All rights reserved.</p>
@@ -84,19 +99,6 @@
             </nav>
 <div class="container">
     <div class="row">
-        <div class="col-md-4 col-xl-3">
-            <div class="card bg-c-student order-card">
-                <div class="card-block">
-                    <h6 class="m-b-20">NO. OF STUDENTS</h6>
-                    <h2 class="text-right"><i class="fa fa-users f-left" style="font-size:40px"></i><span>
-                        {% if number_of_students %}
-                            {{ number_of_students[0] }}
-                        {% endif %} 
-                    </span></h2>
-                    <br><br>
-                </div>
-            </div>
-        </div>
         <div class="col-md-4 col-xl-3">
             <div class="card bg-c-life5 order-card">
                 <div class="card-block">

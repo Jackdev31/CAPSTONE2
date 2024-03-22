@@ -28,13 +28,14 @@
                 <h3>LIFELINE <img class="mr-3" src="static/img/cubers.png" alt="" width="48" height="48"></h3>
             </div>
 
-            <ul class="list-unstyled components">
+<ul class="list-unstyled components">
                 <p>Dashboard</p>
                 <li>
                     <a href="{{ url_for('adminpage') }}">HOME</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('section1') }}">UPLOAD CLASS CSV</a>
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS</a>
+            
                 </li>
                 <li>
                     <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
@@ -48,6 +49,21 @@
                         <li>
                             <a href="{{ url_for('life0') }}">LIFELINE(0)</a>
                         </li>
+                    </ul>
+                </li>
+
+                  <li>
+                    <a href="#studentcredentials" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">STUDENT CREDENTIALS</a>
+                    <ul class="collapse list-unstyled" id="studentcredentials">
+                        <li>
+                            <a href="{{ url_for('studentinfo') }}">STUDENT INFO</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('takeaction') }}">TAKE ACTION</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('studentremarks') }}">STUDENT REMARKS</a>
+                        </li>  
                     </ul>
                 </li>
                 <li>
@@ -111,7 +127,7 @@
                             <tr>
                                 <th>NAME</th>
                                 <th>STUDENT ID</th>
-                                <th>SUBJECT</th>
+                                <th>SUBJECT CODE & DESCRIPTION</th>
                                 <th>P1</th>
                                 <th>P2</th>
                                 <th>P3</th>

@@ -34,8 +34,8 @@
                     <a href="{{ url_for('adminpage') }}">HOME</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('section1') }}">UPLOAD CLASS CSV</a>
-                   
+                    <a href="{{ url_for('section1') }}">UPLOAD CLASS</a>
+            
                 </li>
                 <li>
                     <a href="#lifelineSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">LIFELINES</a>
@@ -49,6 +49,21 @@
                         <li>
                             <a href="{{ url_for('life0') }}">LIFELINE(0)</a>
                         </li>
+                    </ul>
+                </li>
+
+                  <li>
+                    <a href="#studentcredentials" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">STUDENT CREDENTIALS</a>
+                    <ul class="collapse list-unstyled" id="studentcredentials">
+                        <li>
+                            <a href="{{ url_for('studentinfo') }}">STUDENT INFO</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('takeaction') }}">TAKE ACTION</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('studentremarks') }}">STUDENT REMARKS</a>
+                        </li>  
                     </ul>
                 </li>
                 <li>
@@ -84,7 +99,7 @@
 <h1>LIFELINE 5 </h1> <p><i class="fa fa-heart" style="color:red"></i> <i class="fa fa-heart"style="color:red"></i> <i class="fa fa-heart"style="color:red"></i> <i class="fa fa-heart"style="color:red"></i> <i class="fa fa-heart"style="color:red"></i></p>
 <br>
 
-<div class="container ml-5">
+<div class="container ml-3">
     <div class="row">
         <div class="col-15 mb-3 mb-lg-5">
             <div class="overflow-hidden card table-nowrap table-card">
@@ -108,15 +123,15 @@
                     <table class="table mb-0" id="studentTable">
                         <thead class="small text-uppercase bg-body text-dark">
                             <tr>
-                                <th>NAME</th>
-                                <th>STUDENT ID</th>
-                                <th>SUBJECT</th>
+                                <th class="text-center">NAME</th>
+                                <th class="text-center">STUDENT ID</th>
+                                <th>SUBJECT CODE & DESCRIPTION</th>
                                 <th>P1</th>
                                 <th>P2</th>
                                 <th>P3</th>
                                 <th>FINAL GRADE</th>
                                 <th>NUMERIC GRADE</th>
-                                <th>ACADEMIC YEAR</th>
+                                <th class="text-center">ACADEMIC YEAR</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -125,7 +140,7 @@
                             <tr>
                                 <td><i class="fa fa-user" aria-hidden="true"></i> {{ i[1] }}</td>
                                 <td>{{ i[2] }}</td>
-                                <td>{{ i[3] }}</td>
+                                <td class="text-center">{{ i[3] }}</td>
                                 <td>{{ i[4] }}</td>
                                 <td>{{ i[5] }}</td>
                                 <td>{{ i[6] }}</td>
