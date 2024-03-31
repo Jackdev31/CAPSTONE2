@@ -57,7 +57,7 @@
                     <label class="form-label" for="form2Example22">Password</label>
                     <input type="password" name="PASSWORD" id="Password_ID" class="form-control" placeholder="Enter Password" required />
 
-                    
+                    <input class="palagpat mt-3"type="checkbox" onclick="myFunction()"> Show Password
                   </div>
 
                   <div class="text-center pt-1 mb-3 pb-1">
@@ -91,13 +91,12 @@
 </html>
 <script>
   function myFunction() {
-  var x = document.getElementById("myInput");
+  var x = document.getElementById("Password_ID");
   if (x.type === "password") {
     x.type = "text";
   } else {
     x.type = "password";
-  }
-}
+  } }
 </script>
 
 

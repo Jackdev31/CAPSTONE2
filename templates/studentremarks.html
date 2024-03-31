@@ -178,7 +178,7 @@ $(document).ready(function () {
 
         function filterTableBySem(selectedSem) {
             $('#studentTable tbody tr').each(function () {
-                var rowSem = $(this).find('td:nth-child(4)').text().trim(); // Adjust according to the column index of Academic Year
+                var rowSem = $(this).find('td:nth-child(4)').text().trim(); 
                 if (selectedSem === 'All' || selectedSem === rowSem) {
                     $(this).show();
                 } else {
@@ -194,7 +194,7 @@ $(document).ready(function () {
             tr = table.find('tbody tr');
 
             tr.each(function () {
-                var rowSem = $(this).find('td:nth-child(4)').text().trim(); // Adjust according to the column index of Academic Year
+                var rowSem = $(this).find('td:nth-child(4)').text().trim(); 
                 if ($('#sem').val() === 'All' || $('#sem').val() === rowSem) {
                     td = $(this).find('td');
                     var found = false;

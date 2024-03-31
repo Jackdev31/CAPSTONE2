@@ -47,25 +47,31 @@
               
                 <form class="mx-1 mx-md-4" action="{{ url_for('studentreg') }}" method="POST">
 
-                  <div class="form-outline mb-2">
+                  <div class="form-outline mb-1">
                     <label class="form-label" for="form2Example11">STUDENT ID</label>
                     <input type="text" name="STUDENT_ID" id="form2Example11" class="form-control"
                       placeholder="Enter Student ID"  required />
                   </div>
 
-                  <div class="form-outline mb-2">
+                  <div class="form-outline mb-1">
                     <label class="form-label" for="form2Example11">UI-MAIL</label>
                     <input type="email" name="STUDENT_MAIL" id="form2Example11" class="form-control"
                       placeholder="Enter UI-MAIL"  required />
                   </div>                 
 
-                  <div class="form-outline mb-2">
+                  <div class="form-outline mb-1">
                     <label class="form-label" for="form2Example11">NAME</label>
                     <input type="text"  name="FULL_NAME" id="form2Example11" class="form-control"
                       placeholder="Lastname Firstname"  required />
                   </div>
 
-                  <div class="form-outline mb-2">
+                  <div class="form-outline mb-1">
+                    <label class="form-label" for="form2Example11">PHONE NUMBER</label>
+                    <input type="text"  name="PHONE_NUMBER" id="form2Example11" class="form-control"
+                      placeholder="Enter Phone No."  required />
+                  </div>
+                  
+                  <div class="form-outline mb-1">
                     <label class="form-label" for="form2Example22">PASSWORD</label>
                     <input type="password" name="PASSWORD" id="myInput" class="form-control" placeholder="Enter Password" required
                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
@@ -109,6 +115,5 @@
     x.type = "text";
   } else {
     x.type = "password";
-  }
-}
+  } }
 </script>

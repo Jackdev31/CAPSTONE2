@@ -186,19 +186,17 @@ $(document).ready(function () {
 
 <script>
     $(document).ready(function () {
-        // Initial filter based on selected semester
+
         filterTableBySem($('#sem').val());
 
-        // Change event for semester dropdown
         $('#sem').change(function () {
             var selectedSem = $(this).val();
             filterTableBySem(selectedSem);
         });
 
-        // Function to filter table by semester
         function filterTableBySem(selectedSem) {
             $('#studentTable tbody tr').each(function () {
-                var rowSem = $(this).find('td:last').text().trim(); // Get the last cell (ACADEMIC YEAR)
+                var rowSem = $(this).find('td:last').text().trim();
                 if (selectedSem === 'All' || selectedSem === rowSem) {
                     $(this).show();
                 } else {
@@ -207,7 +205,6 @@ $(document).ready(function () {
             });
         }
 
-        // Search functionality
         $('#searchButton').on('click', function () {
             var input, filter, table, tr, td, i, txtValue;
             input = $('#searchInput').val().toUpperCase();
@@ -223,7 +220,7 @@ $(document).ready(function () {
                         txtValue = $(this).text();
                         if (txtValue.toUpperCase().indexOf(input) > -1) {
                             found = true;
-                            return false; // Break the loop if found
+                            return false;
                         }
                     });
                     if (found) {

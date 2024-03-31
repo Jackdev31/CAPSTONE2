@@ -130,16 +130,17 @@
                         <tbody>
                             
                             <tr>
-                                <td>{{studid[0]}}</i> </td>
-                                <td>{{studname[0]}}</td>
-                                <td>{{pn[0]}}</td>
-                                <td>{{fblink[0]}}</td>
-                                <td>{{st[0]}}</td>
-                                <td>{{ct[0]}}</td>
-                                <td>{{mn[0]}}</td>
-                                <td>{{zc[0]}}</td>
+                                {% for i in studinfo %}
+                                <td>{{i[0]}}</i> </td>
+                                <td>{{i[2]}}</td>
+                                <td>{{i[5]}}</td>
+                                <td>{{i[6]}}</td>
+                                <td>{{i[7]}}</td>
+                                <td>{{i[8]}}</td>
+                                <td>{{i[9]}}</td>
+                                <td>{{i[10]}}</td>
                             </tr>
-                           
+                           {% endfor %}
                         </tbody>
                     </table>
                 </div>

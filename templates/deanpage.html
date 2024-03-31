@@ -150,29 +150,27 @@
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
        <script type="text/javascript">
-    // Load google charts
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawCharts);
 
-    // Draw the charts and set the chart values
+
     function drawCharts() {
-        // Chart 1
+        
         var data = google.visualization.arrayToDataTable({{ chartstat|safe }});
         var options = {
             'title': 'CITE LIFELINE',
             'width': 700,
             'height': 500,
             'slices': {
-                0: { color: 'green' },   // LIFELINE(0)
-                1: { color: 'yellow' },// LIFELINE(3)
-                2: { color: 'red' }, // LIFELINE(5)
+                0: { color: 'green' },  
+                1: { color: 'yellow' },
+                2: { color: 'red' }, 
             }
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('piechart'));
         chart.draw(data, options);
 
-        // Chart 2
         var data3D = google.visualization.arrayToDataTable({{ chartstatsss|safe }});
         var options3D = {
             'title': 'CITE LIFELINE0 by (SECTION)',
@@ -224,7 +222,7 @@ $(document).ready(function () {
         }
 
         $('#semesterSelect').on('change', function () {
-            var selectedSemester = $(this).val(); // Get the selected academic year
+            var selectedSemester = $(this).val(); 
             if (selectedSemester === 'All') {
                 window.location.href = "{{ url_for('deanpage') }}";
             } else {

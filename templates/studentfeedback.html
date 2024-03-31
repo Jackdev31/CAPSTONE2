@@ -62,8 +62,8 @@
             </button>
             <h5 class="container-fluid">{{ fn[0] }}!</h5>
             <div>
-                <form action="{{ url_for('studlogout') }}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-danger btn-sm">
+                <form action="{{ url_for('studlogout') }}" id="logoutForm" method="POST" style="display: inline;">
+                    <button type="submit" id="logoutBtn" class="btn btn-danger btn-sm">
                         <span class="fas fa-sign-out-alt"></span> Log out
                     </button>
                 </form>
@@ -85,8 +85,6 @@
                   {% endif %}
                 {% endwith %}
   </div>
-
-  <!-- ... your existing code ... -->
 
 <form action="{{ url_for('studentfeedback') }}" method="POST" id="contact_form">
 <div class="subject">
@@ -266,4 +264,15 @@ $(document).ready(function () {
                 $('#sidebar').toggleClass('active');
             });
         });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#logoutBtn').on('click', function (event) {
+            var result = confirm("Are you sure you want to log out?");
+            if (!result) {
+                event.preventDefault(); 
+            }
+        });
+    });
 </script>

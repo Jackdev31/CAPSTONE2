@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -118,30 +119,30 @@
                     style="width: 185px;" alt="logo">
                   <h5 class="mt-1 mb-3 pb-1"></h5>
                 </div>
-                  <form class="mx-1 mx-md-4" action="{{ url_for('takeaction') }}" method="POST">
-                    <div class="form-outline mb-3">
-                        <h6 class="mb-0">
-                            <label for="sem">SELECT SEMESTER :</label>
-                            <select name="ACADEMIC_YEAR" id="sem" class="form-control">
-                                <option value="All">All</option>
-                                {% for i in ay %}
-                                <option>{{ i[0] }}</option>
-                                {% endfor %}
-                            </select>
-                        </h6>
-                    </div>
-                    <label for="student">SELECT STUDENT</label>
-                    <select name="STUDENT_NAME" id="STUDENT_NAME" required>
-                        <option disabled hidden selected>Select a Student</option>
-                        {% for i in student %}
-                        <option data-sem="{{ i[1] }}" value="{{i[0]}}">{{i[0]}}</option>
-                        {% endfor %}
-                    </select>
-                    <div class="form-outline mb-4"><br>
-                    <div id="current-action-container">
-                    <h6 id="current-action">ACTION: NO ACTION YET</h6>
-                    <br>
-                     </div>
+                    <form class="mx-1 mx-md-4" action="{{ url_for('takeaction') }}" method="POST">
+                        <div class="form-outline mb-1">
+                            <h6 class="mb-0">
+                                <label for="sem"></label>
+                                <select name="ACADEMIC_YEAR" id="sem" class="form-control">
+                                    <option selected disabled value="All">Select Semester</option>
+                                    {% for i in ay %}
+                                    <option>{{ i[0] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </h6>
+                        </div>
+                        <label for="student"></label>
+                        <select name="STUDENT_NAME" id="STUDENT_NAME" required class="form-control" style="display: none;">
+                            <option disabled hidden selected>Select a Student</option>
+                            {% for i in student %}
+                            <option data-sem="{{ i[1] }}" value="{{i[0]}}">{{i[0]}}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-outline mb-4"><br>
+                        <div id="current-action-container">
+                            <h6 id="current-action"></h6>
+                            <br>
+                        </div>
                         <label class="form-label" for="form2Example22"><strong>ACTION TO TAKE</strong></label>
                         <br>
                         <label class="m-b-xs">
@@ -153,13 +154,12 @@
                         <label class="m-b-xs">
                             <input type="radio" name="ACTION" value="NO ACTION YET" required /> Remove Action
                         </label>
-                    </div>
+                        </div>
 
-                    <div class="text-center pt-1 mb-3 pb-1">
-                        <input class="btn btn-warning btn-block fa-lg online-gradient-generated mb-3" type="submit" value="TAKE ACTION">
-                    </div>
-                </form>
-
+                        <div class="text-center pt-1 mb-3 pb-1">
+                            <input class="btn btn-warning btn-block fa-lg online-gradient-generated mb-3" type="submit" value="TAKE ACTION">
+                        </div>
+                    </form>
               </div>
             </div>
             <div class="col-lg-6 d-flex align-items-center online-gradient-generated">
@@ -200,28 +200,36 @@ $(document).ready(function () {
         });
 </script>
 <script>
-    document.getElementById('sem').addEventListener('change', function() {
-        var selectedSem = this.value;
-        var options = document.querySelectorAll('#STUDENT_NAME option');
+document.getElementById('sem').addEventListener('change', function() {
+    var selectedSem = this.value;
+    var studentSelect = document.getElementById('STUDENT_NAME');
+    var options = studentSelect.querySelectorAll('option');
 
+    if (selectedSem === "All") {
+        studentSelect.style.display = 'none';
+        options.forEach(function(option) {
+            option.style.display = 'none';
+        });
+    } else {
+        studentSelect.style.display = '';
         options.forEach(function(option) {
             var sem = option.getAttribute('data-sem');
-            if (selectedSem === "All" || sem === selectedSem) {
+            if (sem === selectedSem) {
                 option.style.display = '';
             } else {
                 option.style.display = 'none';
             }
         });
-    });
+    }
+});
 </script>
 <script>
     document.getElementById('STUDENT_NAME').addEventListener('change', function() {
         var selectedStudent = this.value;
         var currentActionElement = document.getElementById('current-action');
 
-        // Make AJAX request to fetch current action for the selected student
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/get_current_action?student=' + selectedStudent, true);
+        xhr.open('GET', '/get_current_action?student=' + selectedStudent + '&academic_year=' + document.getElementById('sem').value, true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 var currentAction = xhr.responseText;
